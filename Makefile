@@ -72,8 +72,22 @@ help:
 #-------------------------------------------------------------------------------
 
 
-msms-setup:
-	@echo "\n$(GREEN)*** Setting up fresh server management environment ***$(NC)\n"
+msms-setup: vault-setup
+
+msms-load:
+	@echo "\n$(GREEN)*** Loading MSMS metadata from '${META_URL}' ***$(NC)\n"
+	git clone --recurse-submodules $(META_URL) $(ROOT_DIR)/msms_metadata
+
+msms-on: vault-on roles-on
+
+msms-off: vault-off roles-off
+
+
+#-------------------------------------------------------------------------------
+
+
+vault-setup:
+	@echo "\n$(GREEN)*** Setting up fresh server management vault ***$(NC)\n"
 	@if [ ! -d "$(ROOT_DIR)/msms_metadata" ]; then \
 		mkdir -p "$(ROOT_DIR)/msms_metadata"; \
 	fi
@@ -96,12 +110,9 @@ msms-setup:
 		fi; \
 	done
 
-msms-on: vault-on roles-on
-	
-msms-off: vault-off roles-off
-
 vault-on:
 	@echo "\n$(GREEN)*** Opening vault ***$(NC)\n"
+	@mkdir -p "$(ROOT_DIR)/vault"
 	@encfs "$(ROOT_DIR)/msms_metadata/vault" "$(ROOT_DIR)/vault"
 	@ln -s "$(ROOT_DIR)/msms_metadata/roles" "$(ROOT_DIR)/roles"
 	@ln -s "$(ROOT_DIR)/vault/group_files" "$(ROOT_DIR)/group_files"
@@ -115,6 +126,7 @@ vault-on:
 vault-off:
 	@echo "\n$(GREEN)*** Closing vault ***$(NC)\n"
 	@fusermount -u "$(ROOT_DIR)/vault"
+	@rmdir "$(ROOT_DIR)/vault"
 	@for linkfile in group_files group_vars host_facts host_files host_vars inventories roles user_files; do \
 		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
 			rm $(ROOT_DIR)/$$linkfile; \
