@@ -82,6 +82,7 @@ msms-load:
 
 msms-upgrade:
 	@echo "\n$(GREEN)*** Upgrading MSMS metadata ***$(NC)\n"
+	git pull
 	git -C $(ROOT_DIR)/msms_metadata pull
 
 msms-on: vault-on roles-on
