@@ -44,6 +44,8 @@ help:
 	@echo "  * $(GREEN)help$(NC): print this help message and exit"
 	@echo ""
 	@echo "  * $(GREEN)msms-setup$(NC): setup fresh environment for server management system"
+	@echo "  * $(GREEN)msms-load META_URL=git_url$(NC): load existing environment for server management system"
+	@echo "  * $(GREEN)msms-upgrade$(NC): upgrade environment for server management system"
 	@echo "  * $(GREEN)msms-on$(NC): turn on server management system"
 	@echo "  * $(GREEN)msms-off$(NC): turn off server management system"
 	@echo ""
@@ -77,6 +79,10 @@ msms-setup: vault-setup
 msms-load:
 	@echo "\n$(GREEN)*** Loading MSMS metadata from '${META_URL}' ***$(NC)\n"
 	git clone --recurse-submodules $(META_URL) $(ROOT_DIR)/msms_metadata
+
+msms-upgrade:
+	@echo "\n$(GREEN)*** Upgrading MSMS metadata ***$(NC)\n"
+	git -C $(ROOT_DIR)/msms_metadata pull
 
 msms-on: vault-on roles-on
 
