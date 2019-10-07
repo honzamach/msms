@@ -28,4 +28,4 @@ Role list
    :maxdepth: 1
    :glob:
 
-   /roles/*/README
+   /msms_metadata/roles/*/README

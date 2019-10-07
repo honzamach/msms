@@ -2,11 +2,13 @@
    sphinx-quickstart on Tue Mar 29 14:35:05 2016.
 
 Welcome to MSMS!
-===========================================================
+================================================================================
 
 .. toctree::
    :maxdepth: 2
+   :glob:
    :caption: Contents:
 
-   README
-   doc/_pages/manual
+   /README
+   /vault/docs/section*
+   /doc/_pages/manual

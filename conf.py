@@ -47,7 +47,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'documentation'
+master_doc = 'doc/_pages/documentation'
 
 # General information about the project.
 project = 'MSMS'
@@ -78,7 +78,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['doc/_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['doc/_build', 'Thumbs.db', '.DS_Store', 'roles']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

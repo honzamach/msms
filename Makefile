@@ -85,6 +85,14 @@ msms-upgrade:
 	git pull
 	git -C $(ROOT_DIR)/msms_metadata pull
 
+msms-commit:
+	@echo "\n$(GREEN)*** Commiting changes to MSMS metadata ***$(NC)\n"
+	git -C $(ROOT_DIR)/msms_metadata commit -a
+
+msms-push:
+	@echo "\n$(GREEN)*** Pushing current MSMS metadata to remote shared repository ***$(NC)\n"
+	git -C $(ROOT_DIR)/msms_metadata push
+
 msms-on: vault-on roles-on
 
 msms-off: vault-off roles-off
