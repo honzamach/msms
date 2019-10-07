@@ -163,7 +163,7 @@ facts-fetch:
 
 role-install:
 	@echo "\n$(GREEN)*** Installing role '${ROLE_URL}' as '${ROLE_NAME}' ***$(NC)\n"
-	git -C $(ROOT_DIR)/msms_metadata submodule add ${ROLE_URL} $(ROOT_DIR)/msms_metadata/roles/${ROLE_NAME}
+	git -C $(ROOT_DIR)/msms_metadata submodule add ${ROLE_URL} roles/${ROLE_NAME}
 	git -C $(ROOT_DIR)/msms_metadata add .gitmodules roles/${ROLE_NAME}
 	git -C $(ROOT_DIR)/msms_metadata commit -m "Installed role ${ROLE_NAME} from ${ROLE_URL}"
 
