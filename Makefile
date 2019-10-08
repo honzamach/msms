@@ -93,9 +93,9 @@ msms-push:
 	@echo "\n$(GREEN)*** Pushing current MSMS metadata to remote shared repository ***$(NC)\n"
 	git -C $(ROOT_DIR)/msms_metadata push
 
-msms-on: vault-on roles-on
+msms-on: vault-on roles-on playbooks-on
 
-msms-off: vault-off roles-off
+msms-off: vault-off roles-off playbooks-off
 
 
 #-------------------------------------------------------------------------------
@@ -111,6 +111,9 @@ vault-setup:
 	fi
 	@if [ ! -d "$(ROOT_DIR)/msms_metadata/roles" ]; then \
 		mkdir -p "$(ROOT_DIR)/msms_metadata/roles"; \
+	fi
+	@if [ ! -d "$(ROOT_DIR)/msms_metadata/playbooks" ]; then \
+		mkdir -p "$(ROOT_DIR)/msms_metadata/playbooks"; \
 	fi
 	@if [ ! -d "$(ROOT_DIR)/msms_metadata/.git" ]; then \
 		git init "$(ROOT_DIR)/msms_metadata"; \
@@ -155,7 +158,40 @@ vault-off:
 facts-fetch:
 	@echo "\n$(GREEN)*** Fetching host facts ***$(NC)\n"
 	@mkdir -p ./vault/host_facts/production/
-	ansible -i ./inventories/production -m setup --tree ./vault/host_facts/production/ servers
+	ansible --inventory ./inventories/production --module-name setup --tree ./vault/host_facts/production/ servers
+
+
+#-------------------------------------------------------------------------------
+
+
+play-full:
+	@echo "\n$(GREEN)*** Performing full management ***$(NC)\n"
+	ansible-playbook --inventory ./inventories/production playbook_full.yml
+
+play-full-check:
+	@echo "\n$(GREEN)*** Performing full management (DRY-RUN)***$(NC)\n"
+	ansible-playbook --inventory ./inventories/production --check --diff playbook_full.yml
+
+
+#-------------------------------------------------------------------------------
+
+
+playbooks-on:
+	@echo "\n$(GREEN)*** Installing playbooks to main directory ***$(NC)\n"
+	@for playfile in `find ./msms_metadata/playbooks/ -name playbook_*.yml`; do \
+		echo "Installing playbook `basename $$playfile`"; \
+		if [ ! -L `pwd`/`basename $$playfile` ]; then \
+			ln -s `realpath $$playfile` `pwd`/`basename $$playfile`; \
+		fi; \
+	done
+
+playbooks-off:
+	@echo "\n$(GREEN)*** Uninstalling playbooks from main directory ***$(NC)\n"
+	@for linkfile in ./playbook_*; do \
+		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
+			rm $(ROOT_DIR)/$$linkfile; \
+		fi; \
+	done
 
 
 #-------------------------------------------------------------------------------
@@ -167,9 +203,12 @@ role-install:
 	git -C $(ROOT_DIR)/msms_metadata add .gitmodules roles/${ROLE_NAME}
 	git -C $(ROOT_DIR)/msms_metadata commit -m "Installed role ${ROLE_NAME} from ${ROLE_URL}"
 
+
+#-------------------------------------------------------------------------------
+
+
 roles-on:
 	@echo "\n$(GREEN)*** Installing role playbooks to main directory ***$(NC)\n"
-	@rm -f role_*.yml
 	@for rolefile in `find ./roles/ -name role_*.yml`; do \
 		echo "Installing role playbook `basename $$rolefile`"; \
 		if [ ! -L `pwd`/`basename $$rolefile` ]; then \
@@ -189,9 +228,9 @@ roles-check:
 	@echo "\n$(GREEN)*** Checking status of all installed roles ***$(NC)\n"
 	@for roledir in ./roles/*; do \
 		if [ -d $$roledir ]; then \
-			echo "================================================================================"; \
-			echo " Processing role: $$roledir"; \
-			echo "--------------------------------------------------------------------------------"; \
+			echo "════════════════════════════════════════════════════════════════════════════════"; \
+			echo " Checking role: $$roledir"; \
+			echo "────────────────────────────────────────────────────────────────────────────────"; \
 			git -C $$roledir status; \
 			echo; \
 		fi; \
@@ -201,9 +240,9 @@ roles-upgrade:
 	@echo "\n$(GREEN)*** Upgrading all installed roles ***$(NC)\n"
 	@for roledir in ./roles/*; do \
 		if [ -d $$roledir ]; then \
-			echo "================================================================================"; \
-			echo " Processing role: $$roledir"; \
-			echo "--------------------------------------------------------------------------------"; \
+			echo "════════════════════════════════════════════════════════════════════════════════"; \
+			echo " Upgrading role: $$roledir"; \
+			echo "────────────────────────────────────────────────────────────────────────────────"; \
 			git -C $$roledir pull; \
 			echo; \
 		fi; \
