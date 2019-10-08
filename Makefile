@@ -287,7 +287,7 @@ docs-changes: FORCE
 	@echo "The overview file is in $(BUILDDIR)/changes."
 
 docs-view:
-	@x-www-browser $(BUILDDIR)/html/documentation.html
+	@x-www-browser `realpath $(BUILDDIR)`/html/documentation.html
 
 
 
