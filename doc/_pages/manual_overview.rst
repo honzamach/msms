@@ -242,14 +242,14 @@ Currently, there are following subdirectories within the vault:
   * **ca_certs**
 
     Certificates of the additional certificate authorities, that are not preset on target
-    hosts by default. Contents of this directory are used in :ref:`feature-certified <section-role-feature-certified>` role.
+    hosts by default. Contents of this directory are used in :ref:`certified <section-role-certified>` role.
 
   * **host_certs**
 
     Host certificates including private keys. Certificates for each host are inside
     the directory with the same name as is the host name. It works similarly to
     Ansible`s `host_vars <http://docs.ansible.com/ansible/intro_inventory.html#host-variables>`__ directory. Again, contents of this directory are used
-    in :ref:`feature-certified <section-role-feature-certified>` role.
+    in :ref:`certified <section-role-certified>` role.
 
   * *secrets.yml*
 
