@@ -172,6 +172,13 @@ play-full-check:
 	@echo "\n$(GREEN)*** Performing full management (DRY-RUN)***$(NC)\n"
 	ansible-playbook --inventory ./inventories/production --check --diff playbook_full.yml
 
+play-upgrade:
+	@echo "\n$(GREEN)*** Performing full management ***$(NC)\n"
+	ansible-playbook --inventory ./inventories/production task_system_upgrade.yml
+
+play-upgrade-check:
+	@echo "\n$(GREEN)*** Performing full management (DRY-RUN)***$(NC)\n"
+	ansible-playbook --inventory ./inventories/production --check --diff task_system_upgrade.yml
 
 #-------------------------------------------------------------------------------
 
