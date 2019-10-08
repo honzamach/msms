@@ -197,7 +197,9 @@ playbooks-off:
 #-------------------------------------------------------------------------------
 
 
-role-install:
+role-install: role-fetch roles-on
+
+role-fetch:
 	@echo "\n$(GREEN)*** Installing role '${ROLE_URL}' as '${ROLE_NAME}' ***$(NC)\n"
 	git -C $(ROOT_DIR)/msms_metadata submodule add ${ROLE_URL} roles/${ROLE_NAME}
 	git -C $(ROOT_DIR)/msms_metadata add .gitmodules roles/${ROLE_NAME}
