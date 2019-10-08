@@ -259,6 +259,17 @@ Currently, there are following subdirectories within the vault:
     The most important variables in this file are :envvar:`site_users`, :envvar:`site_hosts`
     and :envvar:`server_vars`. These variables serve as a primitive databases and many
     configurations in roles use them as a dictionaries to lookup additional private information.
+    Please see section :ref:`section-overview-secure-registry` for more details
+
+
+.. _section-overview-secure-registry:
+
+Secure registry
+--------------------------------------------------------------------------------
+
+There are certain variables that are expected to exist during each play that
+contain databases of mostly account related information. These variables are loaded
+from *secrets.yml* configuration file.
 
 .. envvar:: site_users
 
@@ -311,7 +322,7 @@ Playbooks
 --------------------------------------------------------------------------------
 
 
-Master playbook - playbook_site.yml
+Master playbook - playbook_full.yml
 ````````````````````````````````````````````````````````````````````````````````
 
 This master playbook includes in correct order all of role playbooks and thus 
