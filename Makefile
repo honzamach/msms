@@ -122,7 +122,7 @@ vault-setup:
 		mkdir -p "$(ROOT_DIR)/vault"; \
 	fi
 	@encfs --standard "$(ROOT_DIR)/msms_metadata/vault" "$(ROOT_DIR)/vault"
-	@for subdir in docs group_files group_vars host_facts host_files host_vars inventories user_files; do \
+	@for subdir in docs spool group_files group_vars host_facts host_files host_vars inventories user_files; do \
 		if [ ! -d $(ROOT_DIR)/vault/$$subdir ]; then \
 			mkdir -p $(ROOT_DIR)/vault/$$subdir; \
 		fi; \
