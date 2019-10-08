@@ -54,6 +54,11 @@ help:
 	@echo ""
 	@echo "  * $(GREEN)facts-fetch$(NC): fetch host facts"
 	@echo ""
+	@echo "  * $(GREEN)play-full$(NC): perform full inventory provisioning"
+	@echo "  * $(GREEN)play-full-check$(NC): perform full inventory provisioning (dry run)"
+	@echo "  * $(GREEN)play-upgrade$(NC): perform full inventory OS upgrade"
+	@echo "  * $(GREEN)play-upgrade-check$(NC): perform full inventory OS upgrade (dry run)"
+	@echo ""
 	@echo "  * $(GREEN)role-install ROLE_URL=git_url ROLE_NAME=name$(NC): install role playbooks to main directory"
 	@echo ""
 	@echo "  * $(GREEN)roles-on$(NC): install role playbooks to main directory"
@@ -165,19 +170,19 @@ facts-fetch:
 
 
 play-full:
-	@echo "\n$(GREEN)*** Performing full management ***$(NC)\n"
+	@echo "\n$(GREEN)*** Performing full inventory provisioning ***$(NC)\n"
 	ansible-playbook --inventory ./inventories/production playbook_full.yml
 
 play-full-check:
-	@echo "\n$(GREEN)*** Performing full management (DRY-RUN)***$(NC)\n"
+	@echo "\n$(GREEN)*** Performing full inventory provisioning (DRY-RUN)***$(NC)\n"
 	ansible-playbook --inventory ./inventories/production --check --diff playbook_full.yml
 
 play-upgrade:
-	@echo "\n$(GREEN)*** Performing full management ***$(NC)\n"
+	@echo "\n$(GREEN)*** Performing full inventory OS upgrade ***$(NC)\n"
 	ansible-playbook --inventory ./inventories/production task_system_upgrade.yml
 
 play-upgrade-check:
-	@echo "\n$(GREEN)*** Performing full management (DRY-RUN)***$(NC)\n"
+	@echo "\n$(GREEN)*** Performing full inventory OS upgrade (DRY-RUN)***$(NC)\n"
 	ansible-playbook --inventory ./inventories/production --check --diff task_system_upgrade.yml
 
 #-------------------------------------------------------------------------------
