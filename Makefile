@@ -99,7 +99,7 @@ msms-upgrade:
 
 msms-commit:
 	@echo "\n$(GREEN)*** Commiting changes to MSMS metadata ***$(NC)\n"
-	git -C $(ROOT_DIR)/msms_metadata commit -a
+	git -C $(ROOT_DIR)/msms_metadata add -A && git -C $(ROOT_DIR)/msms_metadata commit
 
 msms-push:
 	@echo "\n$(GREEN)*** Pushing current MSMS metadata to remote shared repository ***$(NC)\n"
