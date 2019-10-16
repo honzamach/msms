@@ -29,16 +29,18 @@ ROOT_DIR = $(shell pwd)
 
 help:
 	@echo ""
-	@echo " $(GREEN)                         ███╗   ███╗███████╗███╗   ███╗███████╗$(NC)"
-	@echo " $(GREEN)                         ████╗ ████║██╔════╝████╗ ████║██╔════╝$(NC)"
-	@echo " $(GREEN)                         ██╔████╔██║███████╗██╔████╔██║███████╗$(NC)"
-	@echo " $(GREEN)                         ██║╚██╔╝██║╚════██║██║╚██╔╝██║╚════██║$(NC)"
-	@echo " $(GREEN)                         ██║ ╚═╝ ██║███████║██║ ╚═╝ ██║███████║$(NC)"
-	@echo " $(GREEN)                         ╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝$(NC)"                                
+	@echo " $(GREEN)                                 ███╗   ███╗███████╗███╗   ███╗███████╗$(NC)"
+	@echo " $(GREEN)                                 ████╗ ████║██╔════╝████╗ ████║██╔════╝$(NC)"
+	@echo " $(GREEN)                                 ██╔████╔██║███████╗██╔████╔██║███████╗$(NC)"
+	@echo " $(GREEN)                                 ██║╚██╔╝██║╚════██║██║╚██╔╝██║╚════██║$(NC)"
+	@echo " $(GREEN)                                 ██║ ╚═╝ ██║███████║██║ ╚═╝ ██║███████║$(NC)"
+	@echo " $(GREEN)                                 ╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝$(NC)"                                
+	@echo " $(GREEN)                                     Mek's Server Management System$(NC)"
 	@echo ""
-	@echo " $(GREEN)$(BOLD)╔══════════════════════════════════════════════════════════════════════════════════╗$(NC)"
-	@echo " $(GREEN)$(BOLD)║                          LIST OF AVAILABLE MAKE TARGETS                          ║$(NC)"
-	@echo " $(GREEN)$(BOLD)╚══════════════════════════════════════════════════════════════════════════════════╝$(NC)"
+	@echo ""
+	@echo " $(GREEN)$(BOLD)╔══════════════════════════════════════════════════════════════════════════════════════════════════╗$(NC)"
+	@echo " $(GREEN)$(BOLD)║                                  LIST OF AVAILABLE MAKE TARGETS                                  ║$(NC)"
+	@echo " $(GREEN)$(BOLD)╚══════════════════════════════════════════════════════════════════════════════════════════════════╝$(NC)"
 	@echo ""
 	@echo "  * $(GREEN)default$(NC): alias for 'help', you have to pick a target"
 	@echo "  * $(GREEN)help$(NC): print this help message and exit"
@@ -79,7 +81,8 @@ help:
 	@echo "  * $(GREEN)docs-dirhtml$(NC): generate DIRHTML project documentation"
 	@echo "  * $(GREEN)docs-singlehtml$(NC): generate SINGLEHTML project documentation"
 	@echo ""
-	@echo " $(GREEN)────────────────────────────────────────────────────────────────────────────────$(NC)"
+	@echo " $(GREEN)────────────────────────────────────────────────────────────────────────────────────────────────────$(NC)"
+	@echo "                                                                    https://github.com/honzamach/msms"
 	@echo ""
 
 
@@ -93,8 +96,9 @@ msms-load:
 	git clone --recurse-submodules $(META_URL) $(ROOT_DIR)/msms_metadata
 
 msms-upgrade:
-	@echo "\n$(GREEN)*** Upgrading MSMS metadata ***$(NC)\n"
+	@echo "\n$(GREEN)*** Upgrading MSMS ***$(NC)\n"
 	git pull
+	@echo "\n$(GREEN)*** Upgrading MSMS metadata ***$(NC)\n"
 	git -C $(ROOT_DIR)/msms_metadata pull
 
 msms-commit:
@@ -102,7 +106,7 @@ msms-commit:
 	git -C $(ROOT_DIR)/msms_metadata add -A && git -C $(ROOT_DIR)/msms_metadata commit
 
 msms-push:
-	@echo "\n$(GREEN)*** Pushing current MSMS metadata to remote shared repository ***$(NC)\n"
+	@echo "\n$(GREEN)*** Pushing changes to MSMS metadata to remote shared repository ***$(NC)\n"
 	git -C $(ROOT_DIR)/msms_metadata push
 
 msms-on: msms-upgrade vault-on roles-on playbooks-on
@@ -207,6 +211,7 @@ playbooks-on:
 playbooks-off:
 	@echo "\n$(GREEN)*** Uninstalling playbooks from main directory ***$(NC)\n"
 	@for linkfile in ./playbook_*; do \
+		echo "Uninstalling playbook $$linkfile"; \
 		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
 			rm $(ROOT_DIR)/$$linkfile; \
 		fi; \
@@ -240,6 +245,7 @@ roles-on:
 roles-off:
 	@echo "\n$(GREEN)*** Uninstalling role specific playbooks from main directory ***$(NC)\n"
 	@for linkfile in ./role_*; do \
+		echo "Uninstalling role playbook $$linkfile"; \
 		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
 			rm $(ROOT_DIR)/$$linkfile; \
 		fi; \
@@ -249,9 +255,9 @@ roles-check:
 	@echo "\n$(GREEN)*** Checking status of all installed roles ***$(NC)\n"
 	@for roledir in ./roles/*; do \
 		if [ -d $$roledir ]; then \
-			echo "════════════════════════════════════════════════════════════════════════════════"; \
+			echo "════════════════════════════════════════════════════════════════════════════════════════════════════"; \
 			echo " Checking role: $$roledir"; \
-			echo "────────────────────────────────────────────────────────────────────────────────"; \
+			echo "────────────────────────────────────────────────────────────────────────────────────────────────────"; \
 			git -C $$roledir status; \
 			echo; \
 		fi; \
@@ -261,9 +267,9 @@ roles-upgrade:
 	@echo "\n$(GREEN)*** Upgrading all installed roles ***$(NC)\n"
 	@for roledir in ./roles/*; do \
 		if [ -d $$roledir ]; then \
-			echo "════════════════════════════════════════════════════════════════════════════════"; \
+			echo "════════════════════════════════════════════════════════════════════════════════════════════════════"; \
 			echo " Upgrading role: $$roledir"; \
-			echo "────────────────────────────────────────────────────────────────────────────────"; \
+			echo "────────────────────────────────────────────────────────────────────────────────────────────────────"; \
 			git -C $$roledir pull; \
 			echo; \
 		fi; \
