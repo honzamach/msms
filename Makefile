@@ -105,7 +105,7 @@ msms-push:
 	@echo "\n$(GREEN)*** Pushing current MSMS metadata to remote shared repository ***$(NC)\n"
 	git -C $(ROOT_DIR)/msms_metadata push
 
-msms-on: vault-on roles-on playbooks-on
+msms-on: msms-upgrade vault-on roles-on playbooks-on
 
 msms-off: vault-off roles-off playbooks-off
 
