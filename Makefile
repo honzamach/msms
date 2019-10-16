@@ -40,17 +40,20 @@ help:
 	@echo " $(GREEN)$(BOLD)║                          LIST OF AVAILABLE MAKE TARGETS                          ║$(NC)"
 	@echo " $(GREEN)$(BOLD)╚══════════════════════════════════════════════════════════════════════════════════╝$(NC)"
 	@echo ""
-	@echo "  * $(GREEN)default$(NC): alias for help, you have to pick a target"
+	@echo "  * $(GREEN)default$(NC): alias for 'help', you have to pick a target"
 	@echo "  * $(GREEN)help$(NC): print this help message and exit"
 	@echo ""
 	@echo "  * $(GREEN)msms-setup$(NC): setup fresh environment for server management system"
 	@echo "  * $(GREEN)msms-load META_URL=git_url$(NC): load existing environment for server management system"
 	@echo "  * $(GREEN)msms-upgrade$(NC): upgrade environment for server management system"
+	@echo "  * $(GREEN)msms-commit$(NC): commit local inventory configuration changes to MSMS metadata repository"
+	@echo "  * $(GREEN)msms-push$(NC): push local inventory configuration changes to MSMS metadata repository"
 	@echo "  * $(GREEN)msms-on$(NC): turn on server management system"
 	@echo "  * $(GREEN)msms-off$(NC): turn off server management system"
 	@echo ""
-	@echo "  * $(GREEN)vault-on$(NC): open vault"
-	@echo "  * $(GREEN)vault-off$(NC): close vault"
+	@echo "  * $(GREEN)vault-setup$(NC): setup fresh host inventory configuration vault"
+	@echo "  * $(GREEN)vault-on$(NC): open host inventory configuration vault"
+	@echo "  * $(GREEN)vault-off$(NC): close host inventory configuration vault"
 	@echo ""
 	@echo "  * $(GREEN)facts-fetch$(NC): fetch host facts"
 	@echo ""
@@ -59,18 +62,22 @@ help:
 	@echo "  * $(GREEN)play-upgrade$(NC): perform full inventory OS upgrade"
 	@echo "  * $(GREEN)play-upgrade-check$(NC): perform full inventory OS upgrade (dry run)"
 	@echo ""
+	@echo "  * $(GREEN)playbooks-on$(NC): install playbooks to main directory"
+	@echo "  * $(GREEN)playbooks-off$(NC): uninstall playbooks from main directory"
+	@echo ""
 	@echo "  * $(GREEN)role-install ROLE_URL=git_url ROLE_NAME=name$(NC): install role playbooks to main directory"
 	@echo ""
-	@echo "  * $(GREEN)roles-on$(NC): install role playbooks to main directory"
-	@echo "  * $(GREEN)roles-off$(NC): uninstall role playbooks from main directory"
+	@echo "  * $(GREEN)roles-on$(NC): install role specific playbooks to main directory"
+	@echo "  * $(GREEN)roles-off$(NC): uninstall role specific playbooks from main directory"
 	@echo "  * $(GREEN)roles-check$(NC): checking status of installed roles"
 	@echo "  * $(GREEN)roles-upgrade$(NC): upgrade all installed roles to latest versions"
 	@echo ""
-	@echo "  * $(GREEN)docs$(NC): generate local project documentation"
-	@echo "     = $(ORANGE)docs-view$(NC): view HTML project documentation"
-	@echo "     = $(ORANGE)docs-html$(NC): generate HTML project documentation"
-	@echo "     = $(ORANGE)docs-dirhtml$(NC): generate DIRHTML project documentation"
-	@echo "     = $(ORANGE)docs-singlehtml$(NC): generate SINGLEHTML project documentation"
+	@echo "  * $(GREEN)docs$(NC): alias for 'docs-html'"
+	@echo "  * $(GREEN)docs-clean$(NC): clean artifacts of locally built documentation"
+	@echo "  * $(GREEN)docs-view$(NC): view HTML project documentation"
+	@echo "  * $(GREEN)docs-html$(NC): generate HTML project documentation"
+	@echo "  * $(GREEN)docs-dirhtml$(NC): generate DIRHTML project documentation"
+	@echo "  * $(GREEN)docs-singlehtml$(NC): generate SINGLEHTML project documentation"
 	@echo ""
 	@echo " $(GREEN)────────────────────────────────────────────────────────────────────────────────$(NC)"
 	@echo ""
@@ -107,7 +114,7 @@ msms-off: vault-off roles-off playbooks-off
 
 
 vault-setup:
-	@echo "\n$(GREEN)*** Setting up fresh server management vault ***$(NC)\n"
+	@echo "\n$(GREEN)*** Setting up fresh host inventory configuration vault ***$(NC)\n"
 	@if [ ! -d "$(ROOT_DIR)/msms_metadata" ]; then \
 		mkdir -p "$(ROOT_DIR)/msms_metadata"; \
 	fi
@@ -134,7 +141,7 @@ vault-setup:
 	done
 
 vault-on:
-	@echo "\n$(GREEN)*** Opening vault ***$(NC)\n"
+	@echo "\n$(GREEN)*** Opening host inventory configuration vault ***$(NC)\n"
 	@mkdir -p "$(ROOT_DIR)/vault"
 	@encfs "$(ROOT_DIR)/msms_metadata/vault" "$(ROOT_DIR)/vault"
 	@ln -s "$(ROOT_DIR)/msms_metadata/roles" "$(ROOT_DIR)/roles"
@@ -147,7 +154,7 @@ vault-on:
 	@ln -s "$(ROOT_DIR)/vault/user_files" "$(ROOT_DIR)/user_files"
 
 vault-off:
-	@echo "\n$(GREEN)*** Closing vault ***$(NC)\n"
+	@echo "\n$(GREEN)*** Closing host inventory configuration vault ***$(NC)\n"
 	@fusermount -u "$(ROOT_DIR)/vault"
 	@rmdir "$(ROOT_DIR)/vault"
 	@for linkfile in group_files group_vars host_facts host_files host_vars inventories roles user_files; do \
@@ -222,7 +229,7 @@ role-fetch:
 
 
 roles-on:
-	@echo "\n$(GREEN)*** Installing role playbooks to main directory ***$(NC)\n"
+	@echo "\n$(GREEN)*** Installing role specific playbooks to main directory ***$(NC)\n"
 	@for rolefile in `find ./roles/ -name role_*.yml`; do \
 		echo "Installing role playbook `basename $$rolefile`"; \
 		if [ ! -L `pwd`/`basename $$rolefile` ]; then \
@@ -231,7 +238,7 @@ roles-on:
 	done
 
 roles-off:
-	@echo "\n$(GREEN)*** Uninstalling role playbooks from main directory ***$(NC)\n"
+	@echo "\n$(GREEN)*** Uninstalling role specific playbooks from main directory ***$(NC)\n"
 	@for linkfile in ./role_*; do \
 		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
 			rm $(ROOT_DIR)/$$linkfile; \
