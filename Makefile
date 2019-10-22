@@ -267,7 +267,7 @@ role-fetch:
 
 roles-on:
 	@echo "\n$(GREEN)*** Installing role specific playbooks to main directory ***$(NC)\n"
-	@for rolefile in `find ./roles/ -name role_*.yml`; do \
+	@for rolefile in `find ./inventory/roles/ -name role_*.yml`; do \
 		echo "Installing role playbook `basename $$rolefile`"; \
 		if [ ! -L `pwd`/`basename $$rolefile` ]; then \
 			ln -s `realpath $$rolefile` `pwd`/`basename $$rolefile`; \
