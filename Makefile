@@ -177,7 +177,7 @@ config-setup:
 	@if [ ! -f "$(ROOT_DIR)/inventory/.gitignore" ]; then \
 		echo "!.gitignore\n.directory\n*~\n*.log\n*.retry\n*.tmp\n" > "$(ROOT_DIR)/inventory/.gitignore";\
 	fi
-	@for subdir in docs group_files group_vars host_facts host_files host_vars user_files; do \
+	@for subdir in docs group_files group_vars host_files host_vars user_files; do \
 		if [ ! -d $(ROOT_DIR)/inventory/$$subdir ]; then \
 			mkdir -p $(ROOT_DIR)/inventory/$$subdir; \
 		fi; \
