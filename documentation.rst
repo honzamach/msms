@@ -10,5 +10,5 @@ Welcome to MSMS!
    :caption: Contents:
 
    /README
-   /vault/docs/section*
+   /inventory/docs/section*
    /doc/_pages/manual

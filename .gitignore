@@ -6,14 +6,8 @@
 *.tmp
 /role_*.yml
 /doc/_build/
-/group_files
-/group_vars
-/host_facts
-/host_files
-/host_vars
-/inventories
-/msms_metadata
+/inventory
 /roles
 /spool
-/user_files
-/vault
+/venv
+

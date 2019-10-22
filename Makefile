@@ -45,9 +45,9 @@ help:
 	@echo "  * $(GREEN)default$(NC): alias for 'help', you have to pick a target"
 	@echo "  * $(GREEN)help$(NC): print this help message and exit"
 	@echo ""
-	@echo "  * $(GREEN)msms-setup$(NC): setup fresh environment for server management system"
-	@echo "  * $(GREEN)msms-load META_URL=git_url$(NC): load existing environment for server management system"
-	@echo "  * $(GREEN)msms-upgrade$(NC): upgrade environment for server management system"
+	@echo "  * $(GREEN)msms-setup$(NC): setup fresh MSMS inventory configuration"
+	@echo "  * $(GREEN)msms-load META_URL=git_url$(NC): loading MSMS inventory configuration from given repository URL"
+	@echo "  * $(GREEN)msms-upgrade$(NC): upgrade MSMS system and inventory configuration"
 	@echo "  * $(GREEN)msms-commit$(NC): commit local inventory configuration changes to MSMS metadata repository"
 	@echo "  * $(GREEN)msms-push$(NC): push local inventory configuration changes to MSMS metadata repository"
 	@echo "  * $(GREEN)msms-on$(NC): turn on server management system"
@@ -74,12 +74,12 @@ help:
 	@echo "  * $(GREEN)roles-check$(NC): checking status of installed roles"
 	@echo "  * $(GREEN)roles-upgrade$(NC): upgrade all installed roles to latest versions"
 	@echo ""
-	@echo "  * $(GREEN)docs$(NC): alias for 'docs-html'"
+	@echo "  * $(GREEN)docs$(NC): alias for 'docs-html' and 'docs-view'"
 	@echo "  * $(GREEN)docs-clean$(NC): clean artifacts of locally built documentation"
-	@echo "  * $(GREEN)docs-view$(NC): view HTML project documentation"
 	@echo "  * $(GREEN)docs-html$(NC): generate HTML project documentation"
 	@echo "  * $(GREEN)docs-dirhtml$(NC): generate DIRHTML project documentation"
 	@echo "  * $(GREEN)docs-singlehtml$(NC): generate SINGLEHTML project documentation"
+	@echo "  * $(GREEN)docs-view$(NC): view HTML project documentation"
 	@echo ""
 	@echo " $(GREEN)────────────────────────────────────────────────────────────────────────────────────────────────────$(NC)"
 	@echo "                                                                    https://github.com/honzamach/msms"
@@ -89,79 +89,111 @@ help:
 #-------------------------------------------------------------------------------
 
 
-msms-setup: vault-setup
+msms-setup: venv-setup config-setup
 
-msms-load:
-	@echo "\n$(GREEN)*** Loading MSMS metadata from '${META_URL}' ***$(NC)\n"
-	git clone --recurse-submodules $(META_URL) $(ROOT_DIR)/msms_metadata
+msms-load: venv-setup config-load
 
 msms-upgrade:
-	@echo "\n$(GREEN)*** Upgrading MSMS ***$(NC)\n"
+	@echo "\n$(GREEN)*** Upgrading MSMS system ***$(NC)\n"
 	git pull
-	@echo "\n$(GREEN)*** Upgrading MSMS metadata ***$(NC)\n"
-	git -C $(ROOT_DIR)/msms_metadata pull
+	@echo "\n$(GREEN)*** Upgrading MSMS inventory configuration ***$(NC)\n"
+	git -C $(ROOT_DIR)/inventory pull
 
 msms-commit:
-	@echo "\n$(GREEN)*** Commiting changes to MSMS metadata ***$(NC)\n"
-	git -C $(ROOT_DIR)/msms_metadata add -A && git -C $(ROOT_DIR)/msms_metadata commit
+	@echo "\n$(GREEN)*** Commiting changes to MSMS inventory configuration ***$(NC)\n"
+	git -C $(ROOT_DIR)/inventory add -A && git -C $(ROOT_DIR)/inventory commit
 
 msms-push:
-	@echo "\n$(GREEN)*** Pushing changes to MSMS metadata to remote shared repository ***$(NC)\n"
-	git -C $(ROOT_DIR)/msms_metadata push
+	@echo "\n$(GREEN)*** Pushing changes to MSMS inventory configuration to remote shared repository ***$(NC)\n"
+	git -C $(ROOT_DIR)/inventory push
 
-msms-on: msms-upgrade vault-on roles-on playbooks-on
+msms-on: config-on roles-on playbooks-on
 
-msms-off: vault-off roles-off playbooks-off
+msms-off: config-off roles-off playbooks-off
 
 
 #-------------------------------------------------------------------------------
 
 
-vault-setup:
-	@echo "\n$(GREEN)*** Setting up fresh host inventory configuration vault ***$(NC)\n"
-	@if [ ! -d "$(ROOT_DIR)/msms_metadata" ]; then \
-		mkdir -p "$(ROOT_DIR)/msms_metadata"; \
+venv-setup:
+	@echo "\n$(GREEN)*** Installing locally Python virtual environment ***$(NC)\n"
+	@if [ -d $(VENV_PATH) ]; then\
+		echo "$(CYAN)Virtual environment already exists in '$(VENV_PATH)'.$(NC)";\
+	else\
+		echo "Requested version: $(VENV_PYTHON)";\
+		echo "Path to binary:    `which $(VENV_PYTHON)`";\
+		echo "Path to venv:      $(VENV_PATH)";\
+		echo "";\
+		$(VENV_PYTHON) -m venv $(VENV_PATH);\
+		echo "$(CYAN)Virtual environment successfully created in '$(VENV_PATH)'.$(NC)";\
 	fi
-	@if [ ! -d "$(ROOT_DIR)/msms_metadata/vault" ]; then \
-		mkdir -p "$(ROOT_DIR)/msms_metadata/vault"; \
+
+	@echo "\n$(GREEN)*** Upgrading PIP ***$(NC)\n"
+	@$(VENV_PATH)/bin/pip install --upgrade pip
+
+	@echo "\n$(GREEN)*** Installing Python packages ***$(NC)\n"
+	@$(VENV_PATH)/bin/pip install --upgrade ansible
+	@$(VENV_PATH)/bin/pip install --upgrade sphinx
+	@$(VENV_PATH)/bin/pip install --upgrade sphinx-rtd-theme
+
+	@echo "\n$(GREEN)*** Current virtual environment status ***$(NC)\n"
+	@echo "Venv path: `. $(VENV_PATH)/bin/activate && python -c 'import sys; print(sys.prefix)'`"
+	@echo "Python stuff versions:"
+	@echo -n " * "
+	@$(VENV_PATH)/bin/python -V
+	@echo -n " * "
+	@$(VENV_PATH)/bin/pip -V
+	@echo ""
+	@echo "Python packages:"
+	@echo ""
+	@$(VENV_PATH)/bin/pip freeze | sort
+	@echo ""
+	@echo "\n$(CYAN)Your development environment is ready in `. $(VENV_PATH)/bin/activate && python -c 'import sys; print(sys.prefix)'`.$(NC)\n"
+	@echo "Please activate it manually with following command:\n"
+	@echo "\t$(ORANGE). $(VENV_PATH)/bin/activate$(NC)\n"
+	@echo "Consider adding following alias to your ~/.bashrc file for easier environment activation:\n"
+	@echo "\t$(ORANGE)alias entervenv='. venv/bin/activate'$(NC)\n"
+	@echo "$(BOLD)!!! Please keep in mind, that all makefile targets except this one ('msms-venv') leave it up to you to activate the correct virtual environment !!!$(NC)"
+	@echo ""
+
+
+#-------------------------------------------------------------------------------
+
+
+config-setup:
+	@echo "\n$(GREEN)*** Setting up fresh host inventory configuration ***$(NC)\n"
+	@if [ ! -d "$(ROOT_DIR)/inventory" ]; then \
+		mkdir -p "$(ROOT_DIR)/inventory"; \
 	fi
-	@if [ ! -d "$(ROOT_DIR)/msms_metadata/roles" ]; then \
-		mkdir -p "$(ROOT_DIR)/msms_metadata/roles"; \
+	@if [ ! -d "$(ROOT_DIR)/inventory/roles" ]; then \
+		mkdir -p "$(ROOT_DIR)/inventory/roles"; \
 	fi
-	@if [ ! -d "$(ROOT_DIR)/msms_metadata/playbooks" ]; then \
-		mkdir -p "$(ROOT_DIR)/msms_metadata/playbooks"; \
+	@if [ ! -d "$(ROOT_DIR)/inventory/playbooks" ]; then \
+		mkdir -p "$(ROOT_DIR)/inventory/playbooks"; \
 	fi
-	@if [ ! -d "$(ROOT_DIR)/msms_metadata/.git" ]; then \
-		git init "$(ROOT_DIR)/msms_metadata"; \
+	@if [ ! -d "$(ROOT_DIR)/inventory/.git" ]; then \
+		git init "$(ROOT_DIR)/inventory"; \
 	fi
-	@if [ ! -d "$(ROOT_DIR)/vault" ]; then \
-		mkdir -p "$(ROOT_DIR)/vault"; \
+	@if [ ! -f "$(ROOT_DIR)/inventory/.gitignore" ]; then \
+		echo "!.gitignore\n.directory\n*~\n*.log\n*.retry\n*.tmp\n" > "$(ROOT_DIR)/inventory/.gitignore";\
 	fi
-	@encfs --standard "$(ROOT_DIR)/msms_metadata/vault" "$(ROOT_DIR)/vault"
-	@for subdir in docs spool group_files group_vars host_facts host_files host_vars inventories user_files; do \
-		if [ ! -d $(ROOT_DIR)/vault/$$subdir ]; then \
-			mkdir -p $(ROOT_DIR)/vault/$$subdir; \
+	@for subdir in docs group_files group_vars host_facts host_files host_vars user_files; do \
+		if [ ! -d $(ROOT_DIR)/inventory/$$subdir ]; then \
+			mkdir -p $(ROOT_DIR)/inventory/$$subdir; \
 		fi; \
 	done
 
-vault-on:
-	@echo "\n$(GREEN)*** Opening host inventory configuration vault ***$(NC)\n"
-	@mkdir -p "$(ROOT_DIR)/vault"
-	@encfs "$(ROOT_DIR)/msms_metadata/vault" "$(ROOT_DIR)/vault"
-	@ln -s "$(ROOT_DIR)/msms_metadata/roles" "$(ROOT_DIR)/roles"
-	@ln -s "$(ROOT_DIR)/vault/group_files" "$(ROOT_DIR)/group_files"
-	@ln -s "$(ROOT_DIR)/vault/group_vars" "$(ROOT_DIR)/group_vars"
-	@ln -s "$(ROOT_DIR)/vault/host_facts" "$(ROOT_DIR)/host_facts"
-	@ln -s "$(ROOT_DIR)/vault/host_files" "$(ROOT_DIR)/host_files"
-	@ln -s "$(ROOT_DIR)/vault/host_vars" "$(ROOT_DIR)/host_vars"
-	@ln -s "$(ROOT_DIR)/vault/inventories" "$(ROOT_DIR)/inventories"
-	@ln -s "$(ROOT_DIR)/vault/user_files" "$(ROOT_DIR)/user_files"
+config-load:
+	@echo "\n$(GREEN)*** Loading MSMS inventory configuration from '${META_URL}' ***$(NC)\n"
+	git clone --recurse-submodules $(META_URL) $(ROOT_DIR)/inventory
 
-vault-off:
-	@echo "\n$(GREEN)*** Closing host inventory configuration vault ***$(NC)\n"
-	@fusermount -u "$(ROOT_DIR)/vault"
-	@rmdir "$(ROOT_DIR)/vault"
-	@for linkfile in group_files group_vars host_facts host_files host_vars inventories roles user_files; do \
+config-on:
+	@echo "\n$(GREEN)*** Enabling host inventory configuration ***$(NC)\n"
+	ln -s "$(ROOT_DIR)/inventory/roles" "$(ROOT_DIR)/roles"
+
+config-off:
+	@echo "\n$(GREEN)*** Disabling host inventory configuration ***$(NC)\n"
+	@for linkfile in roles; do \
 		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
 			rm $(ROOT_DIR)/$$linkfile; \
 		fi; \
@@ -173,8 +205,8 @@ vault-off:
 
 facts-fetch:
 	@echo "\n$(GREEN)*** Fetching host facts ***$(NC)\n"
-	@mkdir -p ./vault/host_facts/production/
-	ansible --inventory ./inventories/production --module-name setup --tree ./vault/host_facts/production/ servers
+	@mkdir -p ./spool/host_facts
+	ansible --inventory ./inventory/hosts --module-name setup --tree ./spool/host_facts servers
 
 
 #-------------------------------------------------------------------------------
@@ -182,26 +214,26 @@ facts-fetch:
 
 play-full:
 	@echo "\n$(GREEN)*** Performing full inventory provisioning ***$(NC)\n"
-	ansible-playbook --inventory ./inventories/production playbook_full.yml
+	ansible-playbook --inventory ./inventory/hosts playbook_full.yml
 
 play-full-check:
 	@echo "\n$(GREEN)*** Performing full inventory provisioning (DRY-RUN)***$(NC)\n"
-	ansible-playbook --inventory ./inventories/production --check --diff playbook_full.yml
+	ansible-playbook --inventory ./inventory/hosts --check --diff playbook_full.yml
 
 play-upgrade:
 	@echo "\n$(GREEN)*** Performing full inventory OS upgrade ***$(NC)\n"
-	ansible-playbook --inventory ./inventories/production task_system_upgrade.yml
+	ansible-playbook --inventory ./inventory/hosts task_system_upgrade.yml
 
 play-upgrade-check:
 	@echo "\n$(GREEN)*** Performing full inventory OS upgrade (DRY-RUN)***$(NC)\n"
-	ansible-playbook --inventory ./inventories/production --check --diff task_system_upgrade.yml
+	ansible-playbook --inventory ./inventory/hosts --check --diff task_system_upgrade.yml
 
 #-------------------------------------------------------------------------------
 
 
 playbooks-on:
 	@echo "\n$(GREEN)*** Installing playbooks to main directory ***$(NC)\n"
-	@for playfile in `find ./msms_metadata/playbooks/ -name playbook_*.yml`; do \
+	@for playfile in `find ./inventory/playbooks/ -name playbook_*.yml`; do \
 		echo "Installing playbook `basename $$playfile`"; \
 		if [ ! -L `pwd`/`basename $$playfile` ]; then \
 			ln -s `realpath $$playfile` `pwd`/`basename $$playfile`; \
@@ -225,9 +257,9 @@ role-install: role-fetch roles-on
 
 role-fetch:
 	@echo "\n$(GREEN)*** Installing role '${ROLE_URL}' as '${ROLE_NAME}' ***$(NC)\n"
-	git -C $(ROOT_DIR)/msms_metadata submodule add ${ROLE_URL} roles/${ROLE_NAME}
-	git -C $(ROOT_DIR)/msms_metadata add .gitmodules roles/${ROLE_NAME}
-	git -C $(ROOT_DIR)/msms_metadata commit -m "Installed role ${ROLE_NAME} from ${ROLE_URL}"
+	git -C $(ROOT_DIR)/inventory submodule add ${ROLE_URL} roles/${ROLE_NAME}
+	git -C $(ROOT_DIR)/inventory add .gitmodules roles/${ROLE_NAME}
+	git -C $(ROOT_DIR)/inventory commit -m "Installed role ${ROLE_NAME} from ${ROLE_URL}"
 
 
 #-------------------------------------------------------------------------------
@@ -258,8 +290,15 @@ roles-check:
 			echo "════════════════════════════════════════════════════════════════════════════════════════════════════"; \
 			echo " Checking role: $$roledir"; \
 			echo "────────────────────────────────────────────────────────────────────────────────────────────────────"; \
-			git -C $$roledir status; \
-			echo; \
+			if [ -d $$roledir/.git ]; then \
+				echo; \
+				git -C $$roledir status; \
+				echo; \
+			else \
+				echo; \
+				echo "Unable to check for new version, role is NOT under versioning."; \
+				echo; \
+			fi; \
 		fi; \
 	done
 
@@ -270,8 +309,15 @@ roles-upgrade:
 			echo "════════════════════════════════════════════════════════════════════════════════════════════════════"; \
 			echo " Upgrading role: $$roledir"; \
 			echo "────────────────────────────────────────────────────────────────────────────────────────────────────"; \
-			git -C $$roledir pull; \
-			echo; \
+			if [ -d $$roledir/.git ]; then \
+				echo; \
+				git -C $$roledir pull; \
+				echo; \
+			else \
+				echo; \
+				echo "Unable to upgrade to latest version, role is NOT under versioning."; \
+				echo; \
+			fi; \
 		fi; \
 	done
 
@@ -279,10 +325,10 @@ roles-upgrade:
 #-------------------------------------------------------------------------------
 
 
-docs: docs-html
+docs: docs-html docs-view
 
 docs-clean: FORCE
-	@echo "\n$(GREEN)*** Cleaning documentation ***$(NC)\n"
+	@echo "\n$(GREEN)*** Cleaning documentation artifacts ***$(NC)\n"
 	rm -rf $(BUILDDIR)/*
 
 docs-html: FORCE

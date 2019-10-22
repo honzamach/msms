@@ -25,83 +25,106 @@ Directory layout
 --------------------------------------------------------------------------------
 
 
-The basic directory layout uses many `best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
-recomendations with few additions:
+The basic directory layout of MSMS system uses many `best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
+recomendations with a few additions:
 
   * **.git**
 
     Git repository for the base MSMS code and utilities.
 
-  * **msms-metadata**
+  * **bin**
 
-    Git repository containing server management environment for this particular instance.
-    It is intentionally not installed as a Git suproject to separate core MSMS code
-    and utilities from server management environment configuration. It contains following
-    subdirectories:
-
-    * roles
-
-      Directory containing all locally installed roles for this server management environment.
-      These roles are installed as Git submodules to conserver space on 
-
-    * vault
-
-      Encrypted *encfs* volume containing sensitive or classified data or configuration,
-      like server certificates or passwords. This volume is protected by a shared
-      password, which must be known to all administrators. For more information see section
-      :ref:`section-overview-vault` below.
-
-    * .gitmodules
-    
-      List of all locally installed roles for this server management environment.
+    Custom scripts performing various tasks.
 
   * **doc**
 
     Project documentation in various formats, based on `Sphinx <http://www.sphinx-doc.org/en/stable/>`__.
     Documentation in given format can be generated with ``make`` utility, see the
-    section :ref:`section-overview-utilities` below.
+    section :ref:`section-overview-utilities`.
+
+  * **inventory**
+
+    Git repository containing server management environment for this particular instance.
+    It is intentionally NOT installed as a Git suproject to separate core MSMS code
+    and utilities from server management environment configuration. For more information 
+    please see the section :ref:`section-overview-inventory`.
+
+  * **venv**
+
+    Virtual Python environment in which local installation of Ansible and all other
+    requirements will be.
+
+  * **spool**
+
+    Storage directory for side-effects and artifacts of role execution. Roles may place
+    various files for the convenience of the administrator here.
 
   * *conf.py*
 
     `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ documentation generator
     `configuration file <http://www.sphinx-doc.org/en/stable/config.html>`__.
-    For more information on documentation generation see the section :ref:`section-overview-utilities` below.
+    For more information on documentation generation and documentation in general
+    please see the section :ref:`section-overview-documentation`.
 
   * *Makefile*
 
-    `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ documentation generator
-    `make file <http://www.sphinx-doc.org/en/stable/invocation.html#makefile-options>`__.
-    For more information on documentation generation see the section :ref:`section-overview-utilities` below.
+    Master makefile and task/action launcher. You will use it for a wide range of tasks
+    like upgrading, role installation or documentation generation. For more information 
+    please see the section :ref:`section-overview-utilities`.
 
-  * *manual.rst*
+  * *documentation.rst*
 
     `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ documentation root file.
-    For more information on documentation generation see the section :ref:`section-overview-utilities` below.
+    For more information on documentation generation and documentation in general
+    please see the section :ref:`section-overview-documentation`.
 
-After enabling the server management environment following linked directories and
-files will appear in the root directory:
+  * *playbook_full.yml*
+
+    Master playbook performing all roles on all inventory hosts. It will appear in root
+    directory after the MSMS system is enabled. For more information please see the section
+    :ref:`section-overview-playbooks`.
+
+  * *role_...*
+
+    Playbooks executing only single role. They will appear in root directory after the 
+    MSMS system is enabled. For more information please see the section
+    :ref:`section-overview-playbooks`.
+
+  * *task_...*
+
+    Playbooks implementing simple tasks without the use of Ansible roles, see the
+    section :ref:`section-overview-playbooks` for details.
+
+
+.. _section-overview-inventory:
+
+Inventory
+--------------------------------------------------------------------------------
+
+Inventory files are located in **inventory** subdirectory. They are all contained
+within different Git repository, which is intentionally not installed as submodule
+of the master MSMS Git repository. The idea is to separate MSMS toolkit from custom
+local inventory specific configurations.
+
+There are following key components:
 
   * **docs**
 
-    Auto-generated internal documentation for the inventory.
+    Auto-generated internal documentation for the inventory hosts.
 
   * **group_files**
 
-    Host group files. Similarly to **group_vars** these can be used to override
+    Group files. Similar to **group_vars**, but these can be used to override
     certain template files. This feature must be supported by the particular role.
     Fow more information see the section :ref:`section-overview-customize-templates` below.
 
   * **group_vars**
 
-    Host group variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#group-variables>`__ for details.
-
-  * **host_facts**
-
-    Locally stored host facts.
+    Group variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#group-variables>`__ for details.
 
   * **host_files**
 
-    Host files. Similarly to **host_vars** these can be used to override
+    Host files. Similar to **host_vars**, but these can be used to override
     certain template files. This feature must be supported by the particular role.
     Fow more information see the section :ref:`section-overview-customize-templates` below.
 
@@ -109,64 +132,33 @@ files will appear in the root directory:
 
     Host variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#host-variables>`__ for details.
 
-  * **inventories**
+  * **playbooks**
 
-    Inventory files, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#inventory>`__ for details.
-    For description of custom features see the section :ref:`section-overview-inventory-files` below.
+    Directory containing custom playbooks.
 
   * **roles**
 
-    Role repository, see the `Ansible docs <http://docs.ansible.com/ansible/playbooks_roles.html#roles>`__ for details.
-    For description of custom features and role design see the section :ref:`section-overview-role-design` below.
-    For description of custom roles see the section :ref:`section-roles`.
+    Directory containing all locally installed roles for this server management environment.
+    These roles are installed as Git submodules to conserve space consumed by the config
+    repository. 
 
-  * **vault**
+  * *hosts*
 
-    Mount point for decrypted *encfs* volume. All playbooks and roles, that need access
-    to sensitive data and configuration are expecting to find them within this directory.
-    For description of custom features see the :ref:`section-overview-vault` below.
+    Inventory file, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#inventory>`__ for details.
 
-  * *playbook_site.yml*
-
-    Master playbook performing all roles on all inventory hosts, see the section
-    :ref:`section-overview-playbooks` for details.
-
-  * *role_...*
-
-    Playbooks executing only single role, see the section :ref:`section-overview-playbooks`
-    for details.
-
-  * *task_...*
-
-    Playbooks implementing simple task without the use of Ansible roles, see the
-    section :ref:`section-overview-playbooks` for details.
-
-
-.. _section-overview-inventory-files:
-
-Inventory files
---------------------------------------------------------------------------------
-
-
-Inventory files are located in **inventories** subdirectory. They are intentionally
-separated from default Ansible inventory file ``/etc/ansible/hosts``, so that this
-management suite can be distributed as a single package without possible conflicts.
-Bacause of this you have to specify path to correct inventory file with command line
-option ``- i`` each time you are executing the **ansible-playbook** command.
-
-There is currently only one inventory file called *production* which contains the
+There is currently only one inventory file called *hosts* which contains the
 descriptions for all servers.
 
 The design of the inventory file is fairly simple. All managed servers must be in
 the group ``servers``.
 
-Additionally, there is a separate group for each of the roles. The group name is
+Additionally, there is a separate group for each one of the roles. The group name is
 generated by concatenating string ``servers_`` with the name of the role. Again, this
 is hardcoded feature and each role is hadcoded to work only with specific group.
 
 This approach has the advantage that you can clearly state and/or see, which roles will
-be applied to which hosts and you can control this feature outside of the code
-of the role itself.
+be applied to which hosts and you can control this feature within the inventory file 
+and outside of the code of the role itself.
 
 
 .. _section-overview-role-design:
@@ -188,8 +180,8 @@ Additionally each role is tagged with the same tag as the role name. This enable
 for example following use case (following statements are equal)::
 
     # Execute only base-accounts role on appropriate inventory hosts
-    ansible-playbook -i inventories/production role_accounts.yml
-    ansible playbook -i inventories/production --tags=role-accounts playbook_site.yml
+    ansible-playbook role_accounts.yml
+    ansible playbook --tags=role-accounts playbook_full.yml
 
 Every variable, that is used inside the role is prefixed with following string
 pattern:
@@ -212,54 +204,12 @@ So it is possible to execute the playbook more efficiently in respect to the cha
 that need to be done on target system::
 
     # Full playbooks, run only at the first time
-    ansible playbook -i inventories/production playbook_site.yml
+    ansible playbook playbook_full.yml
 
     # Later apply only configuration changes
-    ansible playbook -i inventories/production --tags=configure playbook_site.yml
+    ansible playbook --tags=configure playbook_site.yml
 
 When developing new custom roles please refer to the :ref:`section-usage-custom-roles`.
-
-
-.. _section-overview-vault:
-
-Vault
---------------------------------------------------------------------------------
-
-Working with buil-in vault in Ansible is not to the liking of the author of this
-project. I instead prefer to have the whole directory encrypted with all files
-visible and browsable after decryption. For this reason this project uses a simple
-vault replacement implemented based on *encfs* technology. The ``msms-metadata/vault``
-directory contains all server management configurations encrypted and you need to
-decrypt this directory before any use into ``vault`` directory.
-
-Currently, there are following subdirectories within the vault:
-
-  * **docs**
-  * **group_files**
-  * **group_vars**
-  * **host_files**
-  * **host_vars**
-  * **ca_certs**
-
-    Certificates of the additional certificate authorities, that are not preset on target
-    hosts by default. Contents of this directory are used in :ref:`certified <section-role-certified>` role.
-
-  * **host_certs**
-
-    Host certificates including private keys. Certificates for each host are inside
-    the directory with the same name as is the host name. It works similarly to
-    Ansible`s `host_vars <http://docs.ansible.com/ansible/intro_inventory.html#host-variables>`__ directory. Again, contents of this directory are used
-    in :ref:`certified <section-role-certified>` role.
-
-  * *secrets.yml*
-
-    This file contains secret configurations including user SSH keys and passwords
-    for various services.
-
-    The most important variables in this file are :envvar:`site_users`, :envvar:`site_hosts`
-    and :envvar:`server_vars`. These variables serve as a primitive databases and many
-    configurations in roles use them as a dictionaries to lookup additional private information.
-    Please see section :ref:`section-overview-secure-registry` for more details
 
 
 .. _section-overview-secure-registry:
@@ -269,7 +219,8 @@ Secure registry
 
 There are certain variables that are expected to exist during each play that
 contain databases of mostly account related information. These variables are loaded
-from *secrets.yml* configuration file.
+from *inventory/group_vars/all/users.yml* and *inventory/group_vars/all/hosts.yml* 
+configuration files.
 
 .. envvar:: site_users
 
@@ -280,7 +231,7 @@ from *secrets.yml* configuration file.
         site_users:
             mach:
                 uid: mach
-                name: Jan
+                name: Jan Mach
                 firstname: Jan
                 lastname: Mach
                 email: jan.mach@cesnet.cz
@@ -356,12 +307,29 @@ without the need of modification original template file within the role director
 This feature is simillar to the variable overriding feature of Ansible itself.
 There are two subdirectories in project root directory:
 
-* **group_files**
-* **host_files**
+  * **inventory/group_files**
+  * **inventory/host_files**
 
-They work similarly to the **group_vars** and **host_vars** directories. They may
-contain subdirectories with the names matching inventory hostnames or inventory
-groups and they may contain override template files.
+They work similarly to the **inventory/group_vars** and **inventory/host_vars** 
+directories. They may contain subdirectories with the names matching inventory 
+hostnames or inventory groups and they may contain override template files.
+
+
+.. _section-overview-documentation:
+
+Built-in documentation
+--------------------------------------------------------------------------------
+
+Big part of the MSMS system is a built-in documentation. This documentation does
+not cover only the MSMS system itself (overview, usage manual, ...), but it is
+intended to serve administrators also as an inventory documentation. 
+
+There is a very useful role :ref:`util_inspector <section-role-util-inspector>`,
+which is capable of inspecting the whole inventory and generating documentation
+pages. You may use it like this::
+
+    $ ansible-playbook role_util_inspector.yml
+    $ make docs-view
 
 
 .. _section-overview-utilities:
@@ -376,4 +344,4 @@ make
 Project root directory contains makefile which serves as a single point of control
 for all MSMS features::
 
-    make help
+    $ make help

@@ -36,6 +36,17 @@ BOLD   = $(shell tput bold)
 FAINT  = $(shell tput dim)
 
 #
+# Virtual environment
+#
+VENV_PYTHON = python3
+VENV_PATH   = venv
+PYTHON      = python3
+PIP         = pip
+NOSETESTS   = nosetests
+TWINE       = twine
+PYBABEL     = pybabel
+
+#
 # Display extensive help information page.
 #
 #
