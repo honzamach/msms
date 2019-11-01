@@ -71,6 +71,7 @@ help:
 	@echo ""
 	@echo "  * $(GREEN)roles-on$(NC): install role specific playbooks to main directory"
 	@echo "  * $(GREEN)roles-off$(NC): uninstall role specific playbooks from main directory"
+	@echo "  * $(GREEN)roles-install-default$(NC): install default set of roles in read-only mode"
 	@echo "  * $(GREEN)roles-check$(NC): checking status of installed roles"
 	@echo "  * $(GREEN)roles-upgrade$(NC): upgrade all installed roles to latest versions"
 	@echo ""
@@ -282,6 +283,10 @@ roles-off:
 			rm $(ROOT_DIR)/$$linkfile; \
 		fi; \
 	done
+
+roles-install-default:
+	@echo "\n$(GREEN)*** Installing default set of roles in read-only mode ***$(NC)\n"
+	@bin/setup_default_roles.sh
 
 roles-check:
 	@echo "\n$(GREEN)*** Checking status of all installed roles ***$(NC)\n"
