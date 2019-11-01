@@ -163,26 +163,7 @@ venv-setup:
 
 config-setup:
 	@echo "\n$(GREEN)*** Setting up fresh host inventory configuration ***$(NC)\n"
-	@if [ ! -d "$(ROOT_DIR)/inventory" ]; then \
-		mkdir -p "$(ROOT_DIR)/inventory"; \
-	fi
-	@if [ ! -d "$(ROOT_DIR)/inventory/roles" ]; then \
-		mkdir -p "$(ROOT_DIR)/inventory/roles"; \
-	fi
-	@if [ ! -d "$(ROOT_DIR)/inventory/playbooks" ]; then \
-		mkdir -p "$(ROOT_DIR)/inventory/playbooks"; \
-	fi
-	@if [ ! -d "$(ROOT_DIR)/inventory/.git" ]; then \
-		git init "$(ROOT_DIR)/inventory"; \
-	fi
-	@if [ ! -f "$(ROOT_DIR)/inventory/.gitignore" ]; then \
-		echo "!.gitignore\n.directory\n*~\n*.log\n*.retry\n*.tmp\n" > "$(ROOT_DIR)/inventory/.gitignore";\
-	fi
-	@for subdir in docs group_files group_vars host_files host_vars user_files; do \
-		if [ ! -d $(ROOT_DIR)/inventory/$$subdir ]; then \
-			mkdir -p $(ROOT_DIR)/inventory/$$subdir; \
-		fi; \
-	done
+	@bin/setup_inventory.sh
 
 config-load:
 	@echo "\n$(GREEN)*** Loading MSMS inventory configuration from '${META_URL}' ***$(NC)\n"
