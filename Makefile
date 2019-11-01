@@ -35,7 +35,6 @@ help:
 	@echo " $(GREEN)                                 ██║╚██╔╝██║╚════██║██║╚██╔╝██║╚════██║$(NC)"
 	@echo " $(GREEN)                                 ██║ ╚═╝ ██║███████║██║ ╚═╝ ██║███████║$(NC)"
 	@echo " $(GREEN)                                 ╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝$(NC)"                                
-	@echo " $(GREEN)                                     Mek's Server Management System$(NC)"
 	@echo ""
 	@echo ""
 	@echo " $(GREEN)$(BOLD)╔══════════════════════════════════════════════════════════════════════════════════════════════════╗$(NC)"
@@ -171,13 +170,17 @@ config-load:
 
 config-on:
 	@echo "\n$(GREEN)*** Enabling host inventory configuration ***$(NC)\n"
-	ln -s "$(ROOT_DIR)/inventory/roles" "$(ROOT_DIR)/roles"
+	@if [ ! -L "$(ROOT_DIR)/roles" ]; then \
+		echo "Enabling configuration: roles"; \
+		ln -s "$(ROOT_DIR)/inventory/roles" "$(ROOT_DIR)/roles"; \
+	fi;
 
 config-off:
 	@echo "\n$(GREEN)*** Disabling host inventory configuration ***$(NC)\n"
 	@for linkfile in roles; do \
-		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
-			rm $(ROOT_DIR)/$$linkfile; \
+		if [ -L "$(ROOT_DIR)/$$linkfile" ]; then \
+			echo "Disabling configuration: $$linkfile"; \
+			rm "$(ROOT_DIR)/$$linkfile"; \
 		fi; \
 	done
 
@@ -216,18 +219,20 @@ play-upgrade-check:
 playbooks-on:
 	@echo "\n$(GREEN)*** Installing playbooks to main directory ***$(NC)\n"
 	@for playfile in `find ./inventory/playbooks/ -name playbook_*.yml`; do \
-		echo "Installing playbook `basename $$playfile`"; \
 		if [ ! -L `pwd`/`basename $$playfile` ]; then \
+			echo "Installing playbook: `basename $$playfile`"; \
 			ln -s `realpath $$playfile` `pwd`/`basename $$playfile`; \
+		else \
+			echo "Playbook already installed: `basename $$playfile`"; \
 		fi; \
 	done
 
 playbooks-off:
 	@echo "\n$(GREEN)*** Uninstalling playbooks from main directory ***$(NC)\n"
 	@for linkfile in ./playbook_*; do \
-		echo "Uninstalling playbook $$linkfile"; \
-		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
-			rm $(ROOT_DIR)/$$linkfile; \
+		if [ -L "$(ROOT_DIR)/$$linkfile" ]; then \
+			echo "Uninstalling playbook: $$linkfile"; \
+			rm "$(ROOT_DIR)/$$linkfile"; \
 		fi; \
 	done
 
@@ -249,18 +254,22 @@ role-fetch:
 
 roles-on:
 	@echo "\n$(GREEN)*** Installing role specific playbooks to main directory ***$(NC)\n"
-	@for rolefile in `find ./inventory/roles/ -name role_*.yml`; do \
-		echo "Installing role playbook `basename $$rolefile`"; \
-		if [ ! -L `pwd`/`basename $$rolefile` ]; then \
-			ln -s `realpath $$rolefile` `pwd`/`basename $$rolefile`; \
-		fi; \
-	done
+	@if [ -n $(find ./inventory/roles/ -name "role_*.yml") ]; then \
+		for rolefile in `find ./inventory/roles/ -name "role_*.yml"`; do \
+			if [ ! -L `pwd`/`basename $$rolefile` ]; then \
+				echo "Installing role playbook: `basename $$rolefile`"; \
+				ln -s `realpath $$rolefile` `pwd`/`basename $$rolefile`; \
+			else \
+				echo "Role playbook already installed: `basename $$rolefile`"; \
+			fi; \
+		done; \
+	fi
 
 roles-off:
 	@echo "\n$(GREEN)*** Uninstalling role specific playbooks from main directory ***$(NC)\n"
 	@for linkfile in ./role_*; do \
-		echo "Uninstalling role playbook $$linkfile"; \
 		if [ -L $(ROOT_DIR)/$$linkfile ]; then \
+			echo "Uninstalling role playbook: $$linkfile"; \
 			rm $(ROOT_DIR)/$$linkfile; \
 		fi; \
 	done
