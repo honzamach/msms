@@ -4,6 +4,8 @@
 *.log
 *.retry
 *.tmp
+*.sublime-project
+*.sublime-workspace
 /role_*.yml
 /doc/_build/
 /inventory
