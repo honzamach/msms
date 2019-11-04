@@ -93,7 +93,8 @@ recomendations with a few additions:
 
     `Configuration file <https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html>`__ 
     for |tool_ansible| installed in local virtual environment. This configuration file
-    is customized for *MSMS* directory layout.
+    is customized for *MSMS* directory layout. Search for string ``#--- changed from default ---#``
+    to find customized configuration values.
 
   * *conf.py*
 
