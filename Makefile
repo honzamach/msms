@@ -133,6 +133,7 @@ venv-setup:
 
 	@echo "\n$(GREEN)*** Installing Python packages ***$(NC)\n"
 	@$(VENV_PATH)/bin/pip install --upgrade ansible
+	@$(VENV_PATH)/bin/pip install --upgrade ansible-lint
 	@$(VENV_PATH)/bin/pip install --upgrade sphinx
 	@$(VENV_PATH)/bin/pip install --upgrade sphinx-rtd-theme
 
