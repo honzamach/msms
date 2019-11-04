@@ -3,20 +3,44 @@
 System overview
 ================================================================================
 
+This server management system is basically a set of couple of open source tools 
+and utilities that are configured to work together to provide system administrators
+with ready to use and easy to extend server management system:
 
-The whole server management system is bases on the `Ansible <https://www.ansible.com/>`__
-IT automation tool. Ansible is extremely flexible and there are many ways to
-archieve single goal. It is both strength and weakness, because the playbooks can
-quickly become very chaotic. This project attempts to pick one option to achieve
-certain goal and then stick to it whenever and wherewer it is reasonable and possible. 
-Hopefully this will lead to deterministic organization and better readability and 
-usability.
+The main components are following:
 
-As a first step user should be familiar with the
-`official Ansible documentation <http://docs.ansible.com/ansible/index.html>`__
-and with the `best practices <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
-section in particular, since this project tries to implement as many sane
-recommendations as possible.
+* |tool_ansible|
+
+  IT automation tool and heart of the *MSMS*. |tool_ansible| is extremely flexible 
+  and there are many ways to achieve single goal. It is both strength and weakness, 
+  because the playbooks can quickly become very chaotic and diferent authors can
+  and ussually will choose different approach when solving particular issue. This 
+  project attempts to pick one option to achieve certain goal and then stick to 
+  it whenever and wherewer it is reasonable and possible. Hopefully this will 
+  lead to deterministic organization and better readability and usability.
+
+* |tool_sphinx|
+
+  Documentation builder originally created for Python. It uses `reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`__
+  as a file format and is capable of generating documentation in various formats
+  like HTML, epub, PDF, etc. It is used to generate homogenous documentation for
+  following:
+
+  * Documentation of the *MSMS* system itself (you are reading it now).
+  * Documentation of all the roles that provide a ``README.rst`` file.
+  * Documentation of the host inventory
+
+* |tool_git|
+
+  Distributed version control system plays following roles:
+
+  * Installation and upgrading of the *MSMS* system itself.
+  * Version control of server environment configuration.
+  * Installation and upgrading of |tool_ansible| roles.
+
+* |tool_make|
+
+  Simple and easy to use control utility for executing various *MSMS* tasks and actions.
 
 
 .. _section-overview-directory-layout:
@@ -24,13 +48,19 @@ recommendations as possible.
 Directory layout
 --------------------------------------------------------------------------------
 
+As a first step a *MSMS* user should be familiar with the
+`official Ansible documentation <http://docs.ansible.com/ansible/index.html>`__
+and with the `best practices <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
+section in particular, since this project tries to implement as many sane
+recommendations as possible.
 
-The basic directory layout of MSMS system uses many `best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
+
+The basic directory layout of *MSMS* system uses many `best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
 recomendations with a few additions:
 
   * **.git**
 
-    Git repository for the base MSMS code and utilities.
+    |tool_git| repository for the base *MSMS* code and utilities.
 
   * **bin**
 
@@ -38,33 +68,43 @@ recomendations with a few additions:
 
   * **doc**
 
-    Project documentation in various formats, based on `Sphinx <http://www.sphinx-doc.org/en/stable/>`__.
-    Documentation in given format can be generated with ``make`` utility, see the
-    section :ref:`section-overview-utilities`.
+    Project documentation in various formats, based on |tool_sphinx|. Documentation 
+    in given format can be generated with |tool_make| utility, see the section 
+    :ref:`section-overview-utilities`.
 
   * **inventory**
 
-    Git repository containing server management environment for this particular instance.
-    It is intentionally NOT installed as a Git suproject to separate core MSMS code
-    and utilities from server management environment configuration. For more information 
-    please see the section :ref:`section-overview-inventory`.
+    |tool_git| repository containing server environment configuration for this particular 
+    instance. It is intentionally NOT installed as a Git subproject to separate 
+    core *MSMS* code and utilities from server environment configuration. For more 
+    information please see the section :ref:`section-overview-inventory`.
 
   * **venv**
 
-    Virtual Python environment in which local installation of Ansible and all other
-    requirements will be.
+    Virtual Python environment in which local installation of |tool_ansible| and all other
+    requirements and dependencies will be.
 
   * **spool**
 
     Storage directory for side-effects and artifacts of role execution. Roles may place
-    various files for the convenience of the administrator here.
+    various files for the convenience of the administrator/user here.
+
+  * *ansible.cfg*
+
+    `Configuration file <https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html>`__ 
+    for |tool_ansible| installed in local virtual environment. This configuration file
+    is customized for *MSMS* directory layout.
 
   * *conf.py*
 
-    `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ documentation generator
-    `configuration file <http://www.sphinx-doc.org/en/stable/config.html>`__.
-    For more information on documentation generation and documentation in general
-    please see the section :ref:`section-overview-documentation`.
+    `Configuration file <http://www.sphinx-doc.org/en/stable/config.html>`__ for
+    |tool_sphinx|. For more information on documentation generation and documentation 
+    in general please see the section :ref:`section-overview-documentation`.
+
+  * *documentation.rst*
+
+    Documentation root file for |tool_sphinx|. For more information on documentation 
+    generation and documentation in general please see the section :ref:`section-overview-documentation`.
 
   * *Makefile*
 
@@ -72,28 +112,36 @@ recomendations with a few additions:
     like upgrading, role installation or documentation generation. For more information 
     please see the section :ref:`section-overview-utilities`.
 
-  * *documentation.rst*
+  * *README.rst*
 
-    `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ documentation root file.
-    For more information on documentation generation and documentation in general
-    please see the section :ref:`section-overview-documentation`.
+    Master README file with quick system overview, displayed by default on `GitHub <https://github.com/honzamach/msms>`__.
 
-  * *playbook_full.yml*
 
-    Master playbook performing all roles on all inventory hosts. It will appear in root
-    directory after the MSMS system is enabled. For more information please see the section
-    :ref:`section-overview-playbooks`.
+After activation of the *MSMS* system following files may/will appear in root
+directory:
 
-  * *role_...*
+  * **roles**
 
-    Playbooks executing only single role. They will appear in root directory after the 
-    MSMS system is enabled. For more information please see the section
-    :ref:`section-overview-playbooks`.
+    At the time of writing this there is something broken with the |tool_ansible| configuration
+    ``roles_path``. It would be awesome to point local |tool_ansible| to ``./inventory/roles``
+    directory, but sadly it currently does not work. This is a symlink to work around this
+    problem.
 
-  * *task_...*
+  * *playbook_....yml*
 
-    Playbooks implementing simple tasks without the use of Ansible roles, see the
-    section :ref:`section-overview-playbooks` for details.
+    Various playbooks installed from server environment configuration. For more information 
+    please see the section :ref:`section-overview-playbooks`.
+
+  * *role_....yml*
+
+    Playbooks executing only single role installed from server environment configuration. 
+    They will appear in root directory after the *MSMS* system is enabled. For more 
+    information please see the section :ref:`section-overview-playbooks`.
+
+  * *task_....yml*
+
+    Playbooks implementing simple tasks without the use of |tool_ansible| roles. For more 
+    information please see the section :ref:`section-overview-playbooks`.
 
 
 .. _section-overview-inventory:
@@ -101,60 +149,71 @@ recomendations with a few additions:
 Inventory
 --------------------------------------------------------------------------------
 
-Inventory files are located in **inventory** subdirectory. They are all contained
-within different Git repository, which is intentionally not installed as submodule
-of the master MSMS Git repository. The idea is to separate MSMS toolkit from custom
-local inventory specific configurations.
+Inventory files are located in **inventory** subdirectory and they represent configuration
+for specific server environment. They are all contained within different |tool_git| 
+repository, which is intentionally NOT installed as submodule of the master *MSMS* 
+repository. The idea is to separate *MSMS* toolkit from custom inventory specific 
+configurations. So although the **inventory** directory is contained within the *MSMS*
+root directory, it is removed from versioning with main ``.gitignore`` file and you
+may think of it being installed as a loose plugin. 
 
-There are following key components:
+There are following key subdirectories/components you can use to define your particular
+server management environment:
 
   * **docs**
 
-    Auto-generated internal documentation for the inventory hosts.
+    Auto-generated internal documentation for the inventory hosts. Most of the files
+    in this directory are produced by the :ref:`section-role-util-inspector`.
 
   * **group_files**
 
-    Group files. Similar to **group_vars**, but these can be used to override
-    certain template files. This feature must be supported by the particular role.
-    Fow more information see the section :ref:`section-overview-customize-templates` below.
+    Group files. Similar mechanism to **group_vars**. Files placed on certain locations
+    in this directory can be used to everride default role template files. This feature 
+    is custom and support must be implemented by the particular role. Fow more information 
+    please see the section :ref:`section-overview-customize-templates`.
 
   * **group_vars**
 
-    Group variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#group-variables>`__ for details.
+    Group inventory variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#group-variables>`__ for details.
 
   * **host_files**
 
-    Host files. Similar to **host_vars**, but these can be used to override
-    certain template files. This feature must be supported by the particular role.
-    Fow more information see the section :ref:`section-overview-customize-templates` below.
+    Host files. Similar mechanism to **host_vars**. Files placed on certain locations
+    in this directory can be used to everride default role template files. This feature 
+    is custom and support must be implemented by the particular role. Fow more information 
+    please see the section :ref:`section-overview-customize-templates`.
 
   * **host_vars**
 
-    Host variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#host-variables>`__ for details.
+    Host inventory variables, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#host-variables>`__ for details.
 
   * **playbooks**
 
-    Directory containing custom playbooks.
+    Directory containing custom inventory playbooks. These playbooks will be installed to
+    the *MSMS* root directory.
 
   * **roles**
 
     Directory containing all locally installed roles for this server management environment.
-    These roles are installed as Git submodules to conserve space consumed by the config
-    repository. 
+    These roles are installed as |tool_git| submodules to conserve space consumed by the config
+    repository and to enable easy role management with native |tool_git| commands. 
 
   * *hosts*
 
-    Inventory file, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#inventory>`__ for details.
+    Master inventory file, see the `Ansible docs <http://docs.ansible.com/ansible/intro_inventory.html#inventory>`__ 
+    for details. There is currently only one inventory file called *hosts* which contains 
+    the descriptions for all servers managed by this particular instance of *MSMS*. It is
+    not necessary to provide path to this file with |tool_ansible| ``-i|--inventory``
+    option, because local installation is preconfigured for this file path. There is
+    technically possible to use multiple host inventory files, but it was not yet
+    needed, so this feature is not yet tested and may produce unknown results.
 
-There is currently only one inventory file called *hosts* which contains the
-descriptions for all servers.
-
-The design of the inventory file is fairly simple. All managed servers must be in
-the group ``servers``.
+The design of the inventory *hosts* file is fairly simple. All managed servers must be 
+in the group ``servers``.
 
 Additionally, there is a separate group for each one of the roles. The group name is
 generated by concatenating string ``servers_`` with the name of the role. Again, this
-is hardcoded feature and each role is hadcoded to work only with specific group.
+is hardcoded feature and each role is hardcoded to work only with specific group.
 
 This approach has the advantage that you can clearly state and/or see, which roles will
 be applied to which hosts and you can control this feature within the inventory file 
@@ -168,7 +227,7 @@ Role design
 
 Each role was developed according to the Ansible `best practice <http://docs.ansible.com/ansible/playbooks_best_practices.html>`__
 with addition of few extra features. Description of the contents of the
-role subdirectories can be found in the Ansible docs.
+role subdirectories can be found in the Ansible `docs <https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html>`__.
 
 Each role is hardcoded to use specific inventory group. The group name is
 generated by concatenating string ``servers_`` with the name of the role. For
@@ -207,7 +266,7 @@ that need to be done on target system::
     ansible playbook playbook_full.yml
 
     # Later apply only configuration changes
-    ansible playbook --tags=configure playbook_site.yml
+    ansible playbook --tags=configure playbook_full.yml
 
 When developing new custom roles please refer to the :ref:`section-usage-custom-roles`.
 
@@ -336,7 +395,6 @@ pages. You may use it like this::
 
 Utilities
 --------------------------------------------------------------------------------
-
 
 make
 ````````````````````````````````````````````````````````````````````````````````

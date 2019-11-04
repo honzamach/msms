@@ -107,6 +107,13 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
+# Common RST substitutions.
+rst_epilog = """
+.. |tool_ansible| replace:: `Ansible <https://www.ansible.com/>`__
+.. |tool_sphinx| replace:: `Sphinx <http://www.sphinx-doc.org/en/master/index.html>`__
+.. |tool_git| replace:: `Git <https://git-scm.com/>`__
+.. |tool_make| replace:: `GNU Make <https://www.gnu.org/software/make/>`__
+"""
 
 # -- Options for HTML output ----------------------------------------------
 
