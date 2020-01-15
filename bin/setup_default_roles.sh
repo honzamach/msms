@@ -26,6 +26,8 @@ declare -a ROLE_LIST=(
 	"honzamach/ansible-role-postgresql.git;honzamach.postgresql"
 	"honzamach/ansible-role-geoip.git;honzamach.geoip"
 	"honzamach/ansible-role-alchemist.git;honzamach.alchemist"
+	"honzamach/ansible-role-griffin.git;honzamach.griffin"
+	"honzamach/ansible-role-griffin-watchee.git;honzamach.griffin_watchee"
 	"honzamach/ansible-role-logserver.git;honzamach.logserver"
 	"honzamach/ansible-role-puppeteer.git;honzamach.puppeteer"
 	"honzamach/ansible-role-mentat.git;honzamach.mentat"
