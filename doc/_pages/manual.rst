@@ -3,7 +3,7 @@
 MSMS manual
 ================================================================================
 
-This section contains in-depth manual for *MSMS* system itself.
+This section contains in-depth manual for **MSMS** system itself.
 
 .. toctree::
    	:maxdepth: 2

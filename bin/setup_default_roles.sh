@@ -4,6 +4,17 @@
 # Helper script for installing default set of Ansible roles.
 #
 ###############################################################################
+#
+# Install default set of roles in RO mode:
+#
+#   $ setup_default_roles.sh
+#
+# Install default set of roles in RW mode (you will need RW access to their
+# respective Git repositories on GitHub:
+#
+#   $ setup_default_roles.sh rw
+#
+###############################################################################
 
 MSMS_ROOT_DIR=`pwd`
 MSMS_ROLE_DIR="${MSMS_ROOT_DIR}/inventory/roles"
@@ -31,10 +42,10 @@ declare -a ROLE_LIST=(
 	"honzamach/ansible-role-logserver.git;honzamach.logserver"
 	"honzamach/ansible-role-puppeteer.git;honzamach.puppeteer"
 	"honzamach/ansible-role-mentat.git;honzamach.mentat"
-	"honzamach/ansible-role-mentat-cesnet.git;honzamach.mentat_cesnet"
 	"honzamach/ansible-role-mentat-dev.git;honzamach.mentat_dev"
 	"honzamach/ansible-role-warden-client.git;honzamach.warden_client"
 	"honzamach/ansible-role-util-inspector.git;honzamach.util_inspector"
+	"honzamach/ansible-role-util-rolecreator.git;honzamach.util_rolecreator"
 )
 
 #

@@ -1,10 +1,8 @@
-.. MSMS documentation master file, created by
-   sphinx-quickstart on Tue Mar 29 14:35:05 2016.
-
 Welcome to **MSMS!**
 ================================================================================
 
-Welcome to **MSMS**, server management system based on |tool_ansible|.
+Welcome to **MSMS**, a server management system based on |tool_ansible| IT automation
+tool and other open-source utilities.
 
 .. toctree::
    :maxdepth: 2

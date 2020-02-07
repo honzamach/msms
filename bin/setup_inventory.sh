@@ -1,4 +1,10 @@
 #!/bin/bash
+###############################################################################
+#
+# Helper script for setting up default inventory directory tree structure.
+#
+###############################################################################
+
 MSMS_ROOT_DIR="${1}"
 MSMS_ROOT_DIR="${MSMS_ROOT_DIR:=`pwd`}"
 echo "Root directory for inventory: ${MSMS_ROOT_DIR}"
@@ -6,7 +12,7 @@ echo "Root directory for inventory: ${MSMS_ROOT_DIR}"
 #
 # Create inventory directory structure.
 #
-if [ ! -d "${MSMS_ROOT_DIR}/inventory" ]; then 
+if [ ! -d "${MSMS_ROOT_DIR}/inventory" ]; then
 	mkdir -p "${MSMS_ROOT_DIR}/inventory"
 fi
 for subdir in docs group_files group_vars host_files host_vars playbooks roles user_files; do
@@ -18,7 +24,7 @@ done
 #
 # Create inventory Git repository.
 #
-if [ ! -d "${MSMS_ROOT_DIR}/inventory/.git" ]; then 
+if [ ! -d "${MSMS_ROOT_DIR}/inventory/.git" ]; then
 	git init "${MSMS_ROOT_DIR}/inventory"
 fi
 
@@ -103,17 +109,21 @@ servers
 
 [servers_postgresql]
 
+[servers_geoip]
+
 #-------------------------------------------------------------------------------
 
 [servers_alchemist]
+
+[servers_griffin]
+
+[servers_griffin_watchee]
 
 [servers_logserver]
 
 [servers_puppeteer]
 
 [servers_mentat]
-
-[servers_mentat_cesnet]
 
 [servers_mentat_dev]
 
@@ -124,6 +134,8 @@ servers
 #===============================================================================
 
 [server_central_logserver]
+
+[server_central_griffin]
 
 EOT
 fi
