@@ -4,8 +4,9 @@ System overview
 ================================================================================
 
 This server management system is basically a set of couple of open source tools
-and utilities that are configured to work together to provide system administrators
-with ready to use and easy to extend server management system.
+and utilities that are preconfigured to work together and neatly packaged together
+to provide system administrators with ready to use and easy to extend server
+management system.
 
 The main components are following:
 
@@ -41,6 +42,35 @@ The main components are following:
 * |tool_make|
 
   Simple and easy to use control utility for executing various **MSMS** tasks and actions.
+
+
+.. _section-overview-architecture:
+
+Architecture
+--------------------------------------------------------------------------------
+
+Following image depicts current architecture of **MSMS** system. It is composed of
+nested |tool_git| repositories. Outermost repository is the **MSMS** system itself.
+It is composed of common utilities and configuration that are independent on
+particular server inventory. Into this structure you may plug in some server inventory
+configuration structure, which contains configurations specific for your server
+environment. It is inside separate |tool_git| repository to enable cooperation of
+multiple administrators. And finally part of the server inventory configuration
+structure are |tool_ansible| roles, that you are using to actually manage your servers.
+There roles are installed in the inventory repository as |tool_git|
+`submodules <https://git-scm.com/book/en/v2/Git-Tools-Submodules>`__ to conserve
+repository size and enable easy role management with native |tool_git| commands.
+
+.. image:: /doc/_static/msms-overview.svg
+
+Following image depicts expected usage of **MSMS** system. Each administrator is
+working from his own workstation. He has his own copy of **MSMS** system and within
+he has installed clone of server inventory configurations. Administrators are using shared
+Git repository to propagate changes they made to each other. They communicate directly
+with managed servers, so the SSH authentication is in place as an additional layer
+of protection from someone changing something he is not supposed to change.
+
+.. image:: /doc/_static/msms-usage.svg
 
 
 .. _section-overview-directory-layout:
@@ -200,6 +230,12 @@ and some of them are custom and roles must/may explicitly honor them:
     Directory containing all locally installed roles for this server management environment.
     These roles are installed as |tool_git| submodules to conserve space consumed by the config
     repository and to enable easy role management with native |tool_git| commands.
+
+  * **user_files**
+
+    User inventory files. Some roles use files in this directory to enable customizations
+    of some aspects of target servers separately for each user. This feature is custom and
+    support must be explicitly implemented by the particular role.
 
   * *hosts*
 
@@ -519,6 +555,8 @@ Big part of the **MSMS** system is a built-in documentation. This documentation 
 not cover only the **MSMS** system itself (overview, usage manual, ...) and all
 the roles, but it is intended to serve administrators also as an inventory
 documentation.
+
+.. image:: /doc/_static/msms-documentation.svg
 
 There is a very useful role :ref:`util_inspector <section-role-util-inspector>`,
 which is capable of inspecting the whole inventory and generating documentation
