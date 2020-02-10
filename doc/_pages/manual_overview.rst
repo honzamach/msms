@@ -72,6 +72,9 @@ of protection from someone changing something he is not supposed to change.
 
 .. image:: /doc/_static/msms-usage.svg
 
+If you need help setting up server for your shared |tool_git| repositories you
+can take a look at :ref:`puppeteer <section-role-puppeteer>` role.
+
 
 .. _section-overview-directory-layout:
 
@@ -188,6 +191,9 @@ repository. The idea is to separate **MSMS** toolkit from custom inventory speci
 configurations. So although the ``inventory`` directory is contained within the **MSMS**
 root directory, it is removed from versioning with main ``.gitignore`` file. You
 may think of it as being installed as a loose plugin.
+
+If you need help setting up server for your shared |tool_git| repositories you
+can take a look at :ref:`puppeteer <section-role-puppeteer>` role.
 
 There are following key subdirectories/components you can use to define your particular
 server management environment. Some of them are defined by |tool_ansible| specification
