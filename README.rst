@@ -3,6 +3,8 @@
 MSMS - README
 ================================================================================
 
+aka. Mighty Server Management System 😉
+
 **MSMS** is a server management system based on |tool_ansible| IT automation tool
 and other open-source utilities designed to create ready to use and easy to
 extend server management workflow with following key features:
