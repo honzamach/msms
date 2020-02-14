@@ -197,7 +197,7 @@ config-off:
 facts-fetch:
 	@echo "\n$(GREEN)*** Fetching host facts ***$(NC)\n"
 	@mkdir -p ./spool/host_facts
-	ansible --inventory ./inventory/hosts --module-name setup --tree ./spool/host_facts servers --ask-vault--pass
+	ansible --inventory ./inventory/hosts --module-name setup --tree ./spool/host_facts servers --ask-vault-pass
 
 
 #-------------------------------------------------------------------------------
@@ -205,19 +205,19 @@ facts-fetch:
 
 play-full:
 	@echo "\n$(GREEN)*** Performing full inventory provisioning ***$(NC)\n"
-	ansible-playbook --inventory ./inventory/hosts playbook_full.yml --ask-vault--pass
+	ansible-playbook --inventory ./inventory/hosts playbook_full.yml --ask-vault-pass
 
 play-full-check:
 	@echo "\n$(GREEN)*** Performing full inventory provisioning (DRY-RUN)***$(NC)\n"
-	ansible-playbook --inventory ./inventory/hosts --check --diff playbook_full.yml --ask-vault--pass
+	ansible-playbook --inventory ./inventory/hosts --check --diff playbook_full.yml --ask-vault-pass
 
 play-upgrade:
 	@echo "\n$(GREEN)*** Performing full inventory OS upgrade ***$(NC)\n"
-	ansible-playbook --inventory ./inventory/hosts task_system_upgrade.yml --ask-vault--pass
+	ansible-playbook --inventory ./inventory/hosts task_system_upgrade.yml --ask-vault-pass
 
 play-upgrade-check:
 	@echo "\n$(GREEN)*** Performing full inventory OS upgrade (DRY-RUN)***$(NC)\n"
-	ansible-playbook --inventory ./inventory/hosts --check --diff task_system_upgrade.yml --ask-vault--pass
+	ansible-playbook --inventory ./inventory/hosts --check --diff task_system_upgrade.yml --ask-vault-pass
 
 #-------------------------------------------------------------------------------
 
@@ -258,7 +258,7 @@ role-create: role-new roles-on
 
 role-new:
 	@echo "\n$(GREEN)*** Creating new role ***$(NC)\n"
-	ansible-playbook --inventory ./inventory/hosts role_util_rolecreator.yml --ask-vault--pass
+	ansible-playbook --inventory ./inventory/hosts role_util_rolecreator.yml --ask-vault-pass
 
 #-------------------------------------------------------------------------------
 
