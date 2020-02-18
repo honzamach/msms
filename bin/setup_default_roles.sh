@@ -44,6 +44,7 @@ declare -a ROLE_LIST=(
 	"honzamach/ansible-role-mentat.git;honzamach.mentat"
 	"honzamach/ansible-role-mentat-dev.git;honzamach.mentat_dev"
 	"honzamach/ansible-role-warden-client.git;honzamach.warden_client"
+	"honzamach/ansible-role-warden-fail2ban.git;honzamach.warden_fail2ban"
 	"honzamach/ansible-role-util-inspector.git;honzamach.util_inspector"
 	"honzamach/ansible-role-util-rolecreator.git;honzamach.util_rolecreator"
 )
