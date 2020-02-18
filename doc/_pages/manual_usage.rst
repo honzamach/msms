@@ -247,15 +247,13 @@ it on `GitHub <https://github.com/>`__ and `Ansible Galaxy <https://galaxy.ansib
     01. Implement the role ansible-role-acme
     02. Create completely empty GitHub repository for your role ansible-role-acme
     03. $ git add -A
-    04. $ git ci -m "Initial commit"
-    05. $ git tag -a v1.0.0 -m "Initial role release"
-    06. $ git remote add origin git@github.com:[username]/ansible-role-acme.git
-    07. $ git push -u origin master
-    08. $ git push origin v1.0.0
-    09. $ ansible-galaxy import [username] ansible-role-acme
-    10. $ ansible-galaxy setup travis [username] ansible-role-acme xxx-travis-token-xxx
-    11. $ ansible-galaxy setup --list
-    12. Enable CI for your repository in your TravisCI profile interface
+    04. $ git ci -m "Initial commit"; git tag -a v1.0.0 -m "Initial role release";
+    05. $ git remote add origin git@github.com:[username]/ansible-role-acme.git
+    06. $ git push -u origin master; git push origin v1.0.0;
+    07. $ ansible-galaxy import [username] ansible-role-acme
+    08. $ ansible-galaxy setup travis [username] ansible-role-acme xxx-travis-token-xxx
+    09. $ ansible-galaxy setup --list
+    10. Enable CI for your repository in your TravisCI profile interface
 
 If you want to quickly bootstrap directory structure for your new role, you may
 consider using :ref:`util_rolecreator <section-role-util-rolecreator>`. You can
