@@ -141,6 +141,7 @@ venv-setup:
 	@$(VENV_PATH)/bin/pip install --upgrade ansible-lint
 	@$(VENV_PATH)/bin/pip install --upgrade sphinx
 	@$(VENV_PATH)/bin/pip install --upgrade sphinx-rtd-theme
+	@$(VENV_PATH)/bin/pip install --upgrade yamllint
 
 	@echo "\n$(GREEN)*** Current virtual environment status ***$(NC)\n"
 	@echo "Venv path: `. $(VENV_PATH)/bin/activate && python -c 'import sys; print(sys.prefix)'`"
