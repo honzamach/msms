@@ -6,13 +6,14 @@ MSMS manual
 This section contains in-depth manual for **MSMS** system itself.
 
 .. toctree::
-   	:maxdepth: 2
-   	:caption: Contents:
+  :maxdepth: 2
+  :caption: Contents:
 
-   	/README
-   	manual_overview
-   	manual_usage
-   	manual_roles
+  /README
+  manual_overview
+  manual_usage
+  manual_cookbook
+  manual_roles
 
 
 Indices and tables

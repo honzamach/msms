@@ -155,6 +155,9 @@ Please do NOT forget to activate the virtual environment first::
     # Or you may use tags
     $ ansible-playbook --ask-vault-pass --tags=configure,role-accounts --limit=servers_monitored playbook_full.yml
 
+Please also refer to section :ref:`section-cookbook-general-aliases` for tips how to
+save you a lot of typing and make the usage much easier.
+
 
 .. _section-usage-workflow:
 
@@ -171,7 +174,7 @@ Use :ref:`documentation <section-roles>` of installed roles to choose appropriat
 customizations to suit your management goals. Use inventory file to quickly assign
 roles to your servers.
 
-You may need to install additional existing third-party role from any |tool_git|
+You may need to install additional existing third-party roles from any |tool_git|
 repository::
 
     $ make role-install ROLE_URL=https://github.com/honzamach/ansible-role-cleanup.git ROLE_NAME=honzamach.cleanup
@@ -226,6 +229,9 @@ When you are done with your work you should deactivate server management environ
     $ make msms-off
     $ deactivate
 
+Please also refer to section :ref:`section-cookbook-general-aliases` for tips how to
+save you a lot of typing and make the usage much easier.
+
 
 .. _section-usage-create-role:
 
@@ -262,54 +268,3 @@ invoke it by executing::
     $ make role-create
     # Or directly
     $ ansible-playbook --ask-vault-pass role_util_rolecreator.yml
-
-
-.. _section-usage-cookbook:
-
-Usage cookbook
---------------------------------------------------------------------------------
-
-
-Add new server
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you want to add new server to your server management environment please follow
-these steps (example ``your-server.mydomain.com``):
-
-1. Add appropriate record to your ``home/[username]/.ssh/config`` file::
-
-    Host your-server
-        HostName your-server.mydomain.com
-        User root
-        ServerAliveInterval 30
-        ServerAliveCountMax 120
-
-2. In ``inventory/hosts`` file add ``your-server`` to ``[servers]`` group, to one
-   of ``[servers_production], [servers_development], [servers_testing]`` groups
-   depending on the type of the server and then to any other groups depending on
-   what roles you wish to apply to ``your-server``.
-
-3. Create file ``inventory/host_vars/your-server/vars.yml`` and override any role
-   default values that do not fit your requirements. Optionally create vault file
-   ``inventory/host_vars/your-server/vault.yml`` and place inside any secrets. Use
-   `best practice <https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html#variables-and-vaults`__
-   recommendations.
-
-4. Use directory ``inventory/host_files/your-server/`` to customize role templates
-   if necessary (refer to section :ref:`section-overview-role-customize-templates`
-   for more details).
-
-
-.. _section-usage-recommendations:
-
-Recommendations
---------------------------------------------------------------------------------
-
-To make you life easier you may consider adding following command aliases to your
-``.bashrc`` configuration file::
-
-    # Make activation of virtual environment easier:
-    alias entervenv='. venv/bin/activate'
-
-    # Shorten ansible-playbook calls:
-    alias apbv='ansible-playbook --ask-vault-pass'
