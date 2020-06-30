@@ -308,6 +308,9 @@ roles-check:
 			fi; \
 		fi; \
 	done
+	@echo ""
+	git -C $(ROOT_DIR)/inventory submodule status
+	@echo ""
 
 roles-upgrade:
 	@echo "\n$(GREEN)*** Upgrading all installed roles ***$(NC)\n"
@@ -318,6 +321,7 @@ roles-upgrade:
 			echo "────────────────────────────────────────────────────────────────────────────────────────────────────"; \
 			if [ -d $$roledir/.git ] || [ -f $$roledir/.git ]; then \
 				echo; \
+				git -C $$roledir checkout master; \
 				git -C $$roledir pull; \
 				echo; \
 			else \
