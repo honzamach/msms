@@ -39,17 +39,17 @@ aliases to your ``.bashrc`` configuration file::
 
 Meaning of all the aliases is hopefully evident. They are all designed to save you a lot
 of typing that would be otherwise needed due to the use of the vaults. Very neat trick is
-using vault password files instead of passwords. You may have password stored securelly
+using vault password files instead of passwords. You may have password stored securely
 on encrypted flash drive on your keychain, plug it into your device and if you ensure it
-is always mounted to the same location you may use the ``apbf`` and ``anf`` aliases above::
+is always mounted to the same location, you may then use the ``apbf`` and ``anf`` aliases above::
 
-    # Now this:
+    # So now this:
     cd /path/to/your/msms/installation/
     . venv/bin/activate
     ansible-playbook --ask-vault-pass role_accounts.yml
     # and now type your super secure password
 
-    # Becomes this:
+    # Becomes this and you do not have to type vault password over and over again:
     cd /path/to/your/msms/installation/
     entervenv
     apbf role_accounts.yml
@@ -63,7 +63,8 @@ Add new server
 If you want to add new server to your server management environment please follow
 these simple steps (example ``your-server.mydomain.com``):
 
-1. Add appropriate record to your ``/home/[username]/.ssh/config`` file::
+1. Add appropriate record to your ``/home/[username]/.ssh/config`` file, so that
+   you can use just ``ssh your-server`` to connect to it::
 
     Host your-server
         HostName your-server.mydomain.com
@@ -85,6 +86,57 @@ these simple steps (example ``your-server.mydomain.com``):
 4. Use directory ``inventory/host_files/your-server/`` to customize role templates
    if necessary (refer to section :ref:`section-overview-role-customize-templates`
    for more details).
+
+5. Apply the roles to ``your-server`` either by executing all relevant single role
+   playbooks, or by executing the full playbook. Consider using the ``--limit`` option
+   to speedup the process::
+
+     apbf role_commonenv.yml --limit your-server
+     apbf role_accounts.yml --limit your-server
+
+     apbf playbook_full.yml --limit your-server
+
+
+
+.. _section-cookbook-general-newuser:
+
+Add new user
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to add a brand new user to your server management environment please follow
+these simple steps:
+
+1. Add appropriate record to file ``inventory/group_vars/all/users.yml``, subkey
+   :envvar:`site_users`::
+
+        site_users:
+            userid:
+                name: User Name
+                name_utf: Úšěř Ňámé
+                firstname: User
+                lastname: Name
+                email: user.name@domain.org
+                ssh_keys:
+                    - "ssh-rsa AAAA..."
+                    - "ssh-rsa AAAA..."
+                workstations:
+                    - "192.168.1.1"
+                    - "::1"
+            ...
+
+2. Now use role :ref:`accounts <section-role-accounts>` to enable the user acces to appropriate
+   systems. You may use ``inventory/group_vars/all/vars.yml`` file to define global
+   defaults for all servers and/or ``inventory/host_vars/[server-name]/vars.yml``
+   to fine tune the configuration for particular hosts. In any case, you will
+   probably use either :envvar:`hm_accounts__admins` to grant administrator access,
+   or :envvar:`hm_accounts__users` to grant unprivileged access.
+
+The :envvar:`site_users` dictionary is acting as a registry, which allows you to
+define users along with all their metadata at a single place. All roles then have
+access to all that data and you can just point out the users they should take into
+account.
+
+Please refer to section :ref:`section-role-accounts` for more details.
 
 
 .. _section-cookbook-roles:
