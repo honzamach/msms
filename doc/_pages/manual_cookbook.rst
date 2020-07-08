@@ -55,6 +55,24 @@ is always mounted to the same location, you may then use the ``apbf`` and ``anf`
     apbf role_accounts.yml
 
 
+.. _section-cookbook-general-adhoc:
+
+Usefull ad-hoc commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Consider using ad-hoc command capabilities for executing commands on all your servers::
+
+    # List expiration dates of all server certificates:
+    $ anf servers -a "openssl x509 -in /etc/ssl/servercert/cert.pem -noout -issuer -subject -dates"
+
+    # Check whether anything anywhere needs to be restarted:
+    $ anf servers -a "checkrestart"
+
+    # Clear APT caches:
+    $ anf servers -m apt -a "autoclean=true"
+    $ anf servers -m apt -a "autoremove=true"
+
+
 .. _section-cookbook-general-newserver:
 
 Add new server
